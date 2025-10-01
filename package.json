@@ -1,0 +1,28 @@
+{
+	"name": "canvas-lord-ts-template",
+	"private": true,
+	"version": "0.5.3",
+	"description": "Canvas Lord TypeScript Template",
+	"main": "index.js",
+	"packageManager": "pnpm@9.8.0",
+	"engines": {
+		"node": "^22",
+		"pnpm": "^9"
+	},
+	"scripts": {
+		"build": "tsc --project tsconfig.build.json && tsc-alias -p tsconfig.build.json",
+		"build:watch": "tsc --project tsconfig.build.json && (concurrently \"tsc --project tsconfig.build.json -w\" \"tsc-alias -p tsconfig.build.json -w\")"
+	},
+	"author": "Write Games",
+	"license": "ISC",
+	"homepage": "https://github.com/WriteGames/canvas-lord-ts-template#readme",
+	"devDependencies": {
+		"concurrently": "^9.1.2",
+		"tsc-alias": "^1.8.11",
+		"typescript": "5.8.2"
+	},
+	"dependencies": {
+		"@writegames.com/style-guide": "*",
+		"canvas-lord": "*"
+	}
+}

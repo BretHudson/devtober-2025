@@ -1,0 +1,22 @@
+{
+	"extends": "@writegames.com/style-guide/typescript",
+	"compilerOptions": {
+		"allowImportingTsExtensions": true,
+		"paths": {
+			"~/*": ["./js/*"],
+			"canvas-lord": ["./bin/js/canvas-lord/"],
+			"canvas-lord/*": ["./bin/js/canvas-lord/*"]
+		},
+		"rewriteRelativeImportExtensions": true
+	},
+	"tsc-alias": {
+		"verbose": false,
+		"resolveFullPaths": true,
+		"replacers": {},
+		"fileExtensions": {
+			"inputGlob": "{js,jsx,mjs}",
+			"outputCheck": ["js", "json", "jsx", "mjs"]
+		}
+	},
+	"exclude": ["**/canvas-lord/*"]
+}
