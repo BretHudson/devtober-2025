@@ -11,18 +11,23 @@
 	},
 	"scripts": {
 		"build": "tsc --project tsconfig.build.json && tsc-alias -p tsconfig.build.json",
-		"build:watch": "tsc --project tsconfig.build.json && (concurrently \"tsc --project tsconfig.build.json -w\" \"tsc-alias -p tsconfig.build.json -w\")"
+		"build:watch": "tsc --project tsconfig.build.json && (concurrently \"tsc --project tsconfig.build.json -w\" \"tsc-alias -p tsconfig.build.json -w\")",
+		"test": "vitest",
+		"test:watch": "vitest --watch"
 	},
 	"author": "Write Games",
 	"license": "ISC",
 	"homepage": "https://github.com/WriteGames/canvas-lord-ts-template#readme",
 	"devDependencies": {
+		"@writegames.com/style-guide": "*",
+		"canvas": "^3.2.0",
 		"concurrently": "^9.1.2",
+		"jsdom": "^27.0.0",
 		"tsc-alias": "^1.8.11",
-		"typescript": "5.8.2"
+		"typescript": "5.8.2",
+		"vitest": "^3.2.4"
 	},
 	"dependencies": {
-		"@writegames.com/style-guide": "*",
 		"canvas-lord": "*"
 	}
 }
