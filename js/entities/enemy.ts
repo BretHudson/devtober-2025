@@ -3,15 +3,16 @@ import { Sprite } from 'canvas-lord/graphic';
 import { Vec2 } from 'canvas-lord/math';
 import { Ctx } from 'canvas-lord/util/canvas';
 import { Draw } from 'canvas-lord/util/draw';
+import { healthComponent, renderHealth } from '~/components/health';
 import { BaseEntity } from '~/entities/base-entity';
 import { Projectile } from '~/entities/projectile';
 import { COLLIDER_TAG } from '~/util/constants';
-import { positionItemInRow } from '~/util/math';
+
+const viewRadius = 100;
 
 export class Enemy extends BaseEntity {
 	aim = Vec2.zero;
-	curHealth = 3;
-	maxHealth = 3;
+	cooldown = 0;
 
 	constructor(x: number, y: number) {
 		super(x, y);
@@ -24,8 +25,13 @@ export class Enemy extends BaseEntity {
 		collider.tag = COLLIDER_TAG.ENEMY;
 		collider.centerOO();
 		this.collider = collider;
-
 		this.colliderVisible = true;
+
+		this.addComponent(healthComponent);
+	}
+
+	preUpdate(): void {
+		this.cooldown--;
 	}
 
 	update(): void {
@@ -34,31 +40,44 @@ export class Enemy extends BaseEntity {
 			this.y,
 			COLLIDER_TAG.PROJECTILE,
 		);
+
 		if (bullet) {
 			bullet.removeSelf();
-			if (--this.curHealth <= 0) {
+
+			const health = this.component(healthComponent)!;
+			if (--health.cur <= 0) {
 				this.removeSelf();
+				return;
 			}
 		}
+
+		const toPlayer = this.deltaToPlayer();
+		if (toPlayer && toPlayer.magnitude < viewRadius) {
+			if (this.cooldown > 0) return;
+
+			this.shoot(toPlayer);
+
+			this.cooldown = 30;
+		}
+	}
+	shoot(target: Vec2) {
+		this.scene.addEntity(new Projectile(this, target, 3));
 	}
 
 	render(ctx: Ctx): void {
-		const size = 4;
-		const padding = 6;
+		Draw.circle(
+			ctx,
+			{
+				color: 'white',
+				originX: viewRadius,
+				originY: viewRadius,
+				type: 'stroke',
+			},
+			this.x,
+			this.y,
+			viewRadius,
+		);
 
-		const drawY = this.y - 24;
-		for (let i = 0; i < this.maxHealth; ++i) {
-			Draw.circle(
-				ctx,
-				{
-					color: i < this.curHealth ? 'red' : 'gray',
-					originX: size,
-					originY: size,
-				},
-				this.x + positionItemInRow(i, this.maxHealth, size, padding),
-				drawY,
-				size,
-			);
-		}
+		renderHealth(ctx, this);
 	}
 }

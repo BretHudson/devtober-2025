@@ -1,13 +1,16 @@
 import { Game } from 'canvas-lord/core/engine';
 import { Scene } from 'canvas-lord/core/scene';
-import { Player } from './entities/player';
 import { Vec2 } from 'canvas-lord/math';
-import { Enemy } from './entities/enemy';
+import { Player } from '~/entities/player';
+import { Enemy } from '~/entities/enemy';
 
 const game = new Game('game', {
 	fps: 60,
 	backgroundColor: '#323232',
 });
+
+const center = new Vec2(game.width, game.height).invScale(2);
+const fourth = center.invScale(2);
 
 const createPattern = () => {
 	const offscreenCanvas = new OffscreenCanvas(128, 128);
@@ -25,12 +28,25 @@ const createPattern = () => {
 	return pattern;
 };
 
-const scene = new Scene();
+export class GameScene extends Scene {
+	player: Player | null;
 
-const center = new Vec2(game.width, game.height).invScale(2);
-const fourth = center.invScale(2);
+	constructor() {
+		super();
 
-scene.addEntity(new Player(center.x, center.y));
+		this.player = new Player(center.x, center.y);
+		this.addEntity(this.player);
+	}
+
+	removePlayer() {
+		if (!this.player) return;
+
+		this.player.removeSelf();
+		this.player = null;
+	}
+}
+
+const scene = new GameScene();
 
 scene.addEntity(new Enemy(center.x - fourth.x, center.y - fourth.y));
 scene.addEntity(new Enemy(center.x - fourth.x, center.y + fourth.y));
