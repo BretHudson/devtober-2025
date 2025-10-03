@@ -1,5 +1,6 @@
 import { Game } from 'canvas-lord/core/engine';
 import { Scene } from 'canvas-lord/core/scene';
+import { Player } from './entities/player';
 
 const game = new Game('game', {
 	fps: 60,
@@ -23,6 +24,8 @@ const createPattern = () => {
 };
 
 const scene = new Scene();
+
+scene.addEntity(new Player(30, 30));
 
 const pattern = createPattern();
 scene.onRender.add((ctx) => {

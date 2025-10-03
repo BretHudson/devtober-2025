@@ -1,5 +1,6 @@
 import { Game } from './canvas-lord/core/engine.js';
 import { Scene } from './canvas-lord/core/scene.js';
+import { Player } from './entities/player.js';
 const game = new Game('game', {
     fps: 60,
     backgroundColor: '#323232',
@@ -22,6 +23,7 @@ const createPattern = () => {
     return pattern;
 };
 const scene = new Scene();
+scene.addEntity(new Player(30, 30));
 const pattern = createPattern();
 scene.onRender.add((ctx) => {
     ctx.fillStyle = pattern;
