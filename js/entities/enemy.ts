@@ -4,6 +4,7 @@ import { Vec2 } from 'canvas-lord/math';
 import { Ctx } from 'canvas-lord/util/canvas';
 import { Draw } from 'canvas-lord/util/draw';
 import { healthComponent, renderHealth } from '~/components/health';
+import { enemyGun, GunData, renderGun } from '~/data/guns';
 import { BaseEntity } from '~/entities/base-entity';
 import { Projectile } from '~/entities/projectile';
 import { COLLIDER_TAG } from '~/util/constants';
@@ -11,8 +12,9 @@ import { COLLIDER_TAG } from '~/util/constants';
 const viewRadius = 100;
 
 export class Enemy extends BaseEntity {
-	aim = Vec2.zero;
+	aim = Vec2.one;
 	cooldown = 0;
+	gun: GunData;
 
 	constructor(x: number, y: number) {
 		super(x, y);
@@ -28,6 +30,8 @@ export class Enemy extends BaseEntity {
 		this.colliderVisible = true;
 
 		this.addComponent(healthComponent);
+
+		this.gun = enemyGun;
 	}
 
 	preUpdate(): void {
@@ -52,7 +56,8 @@ export class Enemy extends BaseEntity {
 		}
 
 		const toPlayer = this.deltaToPlayer();
-		if (toPlayer && toPlayer.magnitude < viewRadius) {
+		if (this.player && toPlayer && toPlayer.magnitude < viewRadius) {
+			this.aim = this.player.pos;
 			if (this.cooldown > 0) return;
 
 			this.shoot(toPlayer);
@@ -60,8 +65,9 @@ export class Enemy extends BaseEntity {
 			this.cooldown = 30;
 		}
 	}
+
 	shoot(target: Vec2) {
-		this.scene.addEntity(new Projectile(this, target, 3));
+		this.scene.addEntity(new Projectile(this, target, this.gun.projectile));
 	}
 
 	render(ctx: Ctx): void {
@@ -79,5 +85,6 @@ export class Enemy extends BaseEntity {
 		);
 
 		renderHealth(ctx, this);
+		renderGun(ctx, this);
 	}
 }

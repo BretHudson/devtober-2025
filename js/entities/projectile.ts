@@ -2,12 +2,9 @@ import type { Input } from 'canvas-lord';
 import { BoxCollider } from 'canvas-lord/collider';
 import { Sprite } from 'canvas-lord/graphic';
 import { Vec2 } from 'canvas-lord/math';
+import { ProjectileType, projectiles } from '~/data/projectiles';
 import { BaseEntity } from '~/entities/base-entity';
-import { COLLIDER_TAG } from '~/util/constants';
-import type { Player } from '~/entities/player';
-import type { Enemy } from '~/entities/enemy';
-
-type Owner = Player | Enemy;
+import { COLLIDER_TAG, Owner } from '~/util/constants';
 
 export class Projectile extends BaseEntity {
 	timer = 60;
@@ -15,10 +12,13 @@ export class Projectile extends BaseEntity {
 	speed: number;
 	owner: Owner;
 
-	constructor(owner: Owner, dir: Vec2, speed: number) {
+	constructor(owner: Owner, dir: Vec2, typeName: ProjectileType) {
 		super(owner.x, owner.y);
 
-		const sprite = Sprite.createRect(8, 8, 'white');
+		const type = projectiles.get(typeName);
+		if (!type) throw new Error(`Missing ${typeName} projectile type`);
+
+		const sprite = Sprite.createRect(8, 8, type.color);
 		sprite.centerOO();
 		this.graphic = sprite;
 
@@ -26,7 +26,7 @@ export class Projectile extends BaseEntity {
 
 		this.dir = dir;
 		this.dir.normalize();
-		this.speed = speed;
+		this.speed = type.speed;
 
 		const collider = new BoxCollider(8, 8);
 		// TODO(bret): this is hacky af

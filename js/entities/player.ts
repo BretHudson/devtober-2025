@@ -5,6 +5,7 @@ import { Vec2 } from 'canvas-lord/math';
 import type { Ctx } from 'canvas-lord/util/canvas';
 import { Draw } from 'canvas-lord/util/draw';
 import { healthComponent, renderHealth } from '~/components/health';
+import { GunData, playerGun, renderGun } from '~/data/guns';
 import { BaseEntity } from '~/entities/base-entity';
 import { Projectile } from '~/entities/projectile';
 import { COLLIDER_TAG } from '~/util/constants';
@@ -19,8 +20,9 @@ const upKeys: Key[] = ['ArrowUp', 'KeyW'];
 const downKeys: Key[] = ['ArrowDown', 'KeyS'];
 
 export class Player extends BaseEntity {
-	aim = Vec2.zero;
+	aim = Vec2.one;
 	cooldown = 0;
+	gun: GunData;
 
 	constructor(x: number, y: number) {
 		super(x, y);
@@ -36,6 +38,8 @@ export class Player extends BaseEntity {
 		this.colliderVisible = true;
 
 		this.addComponent(healthComponent);
+
+		this.gun = playerGun;
 	}
 
 	preUpdate(): void {
@@ -78,13 +82,16 @@ export class Player extends BaseEntity {
 	shoot(target: Vec2) {
 		if (this.cooldown > 0) return;
 
-		this.scene.addEntity(new Projectile(this, target.sub(this.pos), 6));
+		this.scene.addEntity(
+			new Projectile(this, target.sub(this.pos), this.gun.projectile),
+		);
 
 		this.cooldown = 10;
 	}
 
 	render(ctx: Ctx): void {
 		renderHealth(ctx, this);
+		renderGun(ctx, this);
 
 		const r = 20;
 		Draw.circle(
