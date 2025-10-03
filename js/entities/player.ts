@@ -1,9 +1,12 @@
 import type { Camera, Input, Key } from 'canvas-lord';
-import { Entity } from 'canvas-lord/core/entity';
+import { BoxCollider } from 'canvas-lord/collider';
 import { Sprite } from 'canvas-lord/graphic';
 import { Vec2 } from 'canvas-lord/math';
-import { Ctx } from 'canvas-lord/util/canvas';
+import type { Ctx } from 'canvas-lord/util/canvas';
 import { Draw } from 'canvas-lord/util/draw';
+import { BaseEntity } from './base-entity';
+import { Projectile } from './projectile';
+import { COLLIDER_TAG } from '~/util/constants';
 
 function getAxis(input: Input, neg: Key[], pos: Key[]) {
 	return +input.keyCheck(pos) - +input.keyCheck(neg);
@@ -14,46 +17,22 @@ const rightKeys: Key[] = ['ArrowRight', 'KeyD'];
 const upKeys: Key[] = ['ArrowUp', 'KeyW'];
 const downKeys: Key[] = ['ArrowDown', 'KeyS'];
 
-class Bullet extends Entity {
-	timer = 60;
-	dir: Vec2;
-	speed: number;
-
-	constructor(x: number, y: number, dir: Vec2, speed: number) {
-		super(x, y);
-
-		const sprite = Sprite.createRect(8, 8, 'white');
-		sprite.centerOO();
-		this.graphic = sprite;
-		this.dir = dir;
-		this.dir.normalize();
-		this.speed = speed;
-	}
-
-	update(): void {
-		console.log(this.dir);
-		this.x += this.dir.x * this.speed;
-		this.y += this.dir.y * this.speed;
-	}
-
-	postUpdate(_input: Input): void {
-		console.log(this.timer);
-		if (--this.timer <= 0) {
-			this.scene.removeEntity(this);
-			this.scene.removeRenderable(this);
-		}
-	}
-}
-
-export class Player extends Entity {
+export class Player extends BaseEntity {
 	aim = Vec2.zero;
 
 	constructor(x: number, y: number) {
 		super(x, y);
 
-		const sprite = Sprite.createRect(32, 32, 'red');
+		const sprite = Sprite.createRect(32, 32, 'cyan');
 		sprite.centerOO();
 		this.graphic = sprite;
+
+		const collider = new BoxCollider(32, 32);
+		collider.tag = COLLIDER_TAG.PLAYER;
+		collider.centerOO();
+		this.collider = collider;
+
+		this.colliderVisible = true;
 	}
 
 	update(input: Input): void {
@@ -70,7 +49,7 @@ export class Player extends Entity {
 
 		if (input.mousePressed()) {
 			const toMouse = this.aim.sub(this.pos);
-			this.scene.addEntity(new Bullet(this.x, this.y, toMouse, 6));
+			this.scene.addEntity(new Projectile(this.x, this.y, toMouse, 6));
 		}
 	}
 

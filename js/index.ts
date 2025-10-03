@@ -1,6 +1,8 @@
 import { Game } from 'canvas-lord/core/engine';
 import { Scene } from 'canvas-lord/core/scene';
 import { Player } from './entities/player';
+import { Vec2 } from 'canvas-lord/math';
+import { Enemy } from './entities/enemy';
 
 const game = new Game('game', {
 	fps: 60,
@@ -25,7 +27,15 @@ const createPattern = () => {
 
 const scene = new Scene();
 
-scene.addEntity(new Player(30, 30));
+const center = new Vec2(game.width, game.height).invScale(2);
+const fourth = center.invScale(2);
+
+scene.addEntity(new Player(center.x, center.y));
+
+scene.addEntity(new Enemy(center.x - fourth.x, center.y - fourth.y));
+scene.addEntity(new Enemy(center.x - fourth.x, center.y + fourth.y));
+scene.addEntity(new Enemy(center.x + fourth.x, center.y + fourth.y));
+scene.addEntity(new Enemy(center.x + fourth.x, center.y - fourth.y));
 
 const pattern = createPattern();
 scene.onRender.add((ctx) => {
