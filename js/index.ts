@@ -24,13 +24,21 @@ let game;
 assetManager.onLoad.add(() => {
 	// init guns
 	Object.values(allGunData).forEach((gun) => {
-		const image = assetManager.sprites.get(gun.imageSrc);
-		if (!image) throw new Error();
-		gun.image = image;
+		try {
+			const image = assetManager.sprites.get(gun.imageSrc);
+			if (!image) throw new Error(gun.imageSrc);
+			gun.image = image;
 
-		const audio = assetManager.audio.get(gun.audioSrc);
-		if (!audio) throw new Error();
-		gun.audio = audio;
+			const audio = assetManager.audio.get(gun.audioSrc);
+			if (!audio) throw new Error(gun.audioSrc);
+			gun.audio = audio;
+		} catch (e) {
+			const error = e as Error;
+			const fileName = error.message;
+			error.message = `[Gun] Cannot find "${fileName}" ("${gun.name}")`;
+
+			throw error;
+		}
 	});
 
 	game = new Game('game', {

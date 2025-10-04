@@ -2,6 +2,7 @@ import { Sfx } from 'canvas-lord/core/asset-manager';
 import { Input } from 'canvas-lord/core/input';
 import type { Sprite } from 'canvas-lord/graphic';
 import { Vec2 } from 'canvas-lord/math';
+import { degToRad } from 'canvas-lord/math/misc';
 import type { Camera } from 'canvas-lord/util/camera';
 import type { Ctx } from 'canvas-lord/util/canvas';
 import { healthComponent, renderHealth } from '~/components/health';
@@ -10,6 +11,7 @@ import { BaseEntity } from '~/entities/base-entity';
 import { Projectile } from '~/entities/projectile';
 import { assetManager, ASSETS } from '~/util/assets';
 import { COLLIDER_TAG } from '~/util/constants';
+import { randomSpreadAngle } from '~/util/seeds';
 import { Timer } from '~/util/timer';
 import type { DamageInfo } from '~/util/types';
 
@@ -69,7 +71,7 @@ export class Actor extends BaseEntity {
 		}
 		const audio = assetManager.audio.get(src);
 		if (!audio) throw new Error();
-		Sfx.play(audio);
+		Sfx.play(audio, 1, 0.3);
 
 		if (health.cur <= 0) {
 			this.die();
@@ -84,9 +86,12 @@ export class Actor extends BaseEntity {
 	shoot(target: Vec2) {
 		if (this.cooldown.running) return;
 
-		this.scene.addEntity(new Projectile(this, target, this.gun.projectile));
+		const angleOffset = randomSpreadAngle(this.gun.spreadAngle);
+		const dir = target.rotate(degToRad(angleOffset));
 
-		Sfx.play(this.gun.audio, 0.2);
+		this.scene.addEntity(new Projectile(this, dir, this.gun.projectile));
+
+		Sfx.play(this.gun.audio, 0.2, 0.2);
 
 		this.cooldown.reset(this.gun.cooldown);
 	}

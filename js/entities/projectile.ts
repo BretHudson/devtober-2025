@@ -1,6 +1,6 @@
 import { BoxCollider } from 'canvas-lord/collider';
 import { Sprite } from 'canvas-lord/graphic';
-import { Vec2 } from 'canvas-lord/math';
+import type { Vec2 } from 'canvas-lord/math';
 import {
 	ProjectileFlyweight,
 	ProjectileType,

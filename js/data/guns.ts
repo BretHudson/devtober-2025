@@ -5,11 +5,12 @@ import type { Camera } from 'canvas-lord/util/camera';
 import type { Ctx } from 'canvas-lord/util/canvas';
 import { Draw } from 'canvas-lord/util/draw';
 import { CSSColor } from 'canvas-lord/util/types';
+import { ProjectileType } from '~/data/projectiles';
 import type { Actor } from '~/entities/actor';
 import { ASSETS } from '~/util/assets';
-import { ProjectileType } from './projectiles';
 
 export interface GunData {
+	name: string;
 	imageSrc: string;
 	image: ImageAsset;
 	audioSrc: string;
@@ -17,56 +18,67 @@ export interface GunData {
 	color: CSSColor;
 	projectile: ProjectileType;
 	cooldown: number;
+	spreadAngle: number;
 }
 
 const nullImage = null as unknown as ImageAsset;
 const nullAudio = null as unknown as AudioAsset;
 
-const revolver: GunData = {
-	imageSrc: ASSETS.GFX.REVOLVER,
+const defaults: GunData = {
+	name: 'NAME',
+	imageSrc: 'null.png',
 	image: nullImage,
-	audioSrc: ASSETS.SFX.SHOOT_1,
+	audioSrc: 'null.wav',
 	audio: nullAudio,
-	color: 'pink',
-	projectile: 'revolver',
-	cooldown: 20,
-};
-
-const machineGun: GunData = {
-	imageSrc: ASSETS.GFX.MACHINE_GUN,
-	image: nullImage,
-	audioSrc: ASSETS.SFX.SHOOT_2,
-	audio: nullAudio,
-	color: 'yellow',
-	projectile: 'machine-gun',
-	cooldown: 6,
-};
-
-const rifle: GunData = {
-	imageSrc: ASSETS.GFX.SHOTGUN,
-	image: nullImage,
-	audioSrc: ASSETS.SFX.SHOOT_3,
-	audio: nullAudio,
-	color: 'silver',
-	projectile: 'rifle',
-	cooldown: 30,
-};
-
-const enemyGun: GunData = {
-	imageSrc: ASSETS.GFX.ENEMY_GUN,
-	image: nullImage,
-	audioSrc: ASSETS.SFX.SHOOT_1,
-	audio: nullAudio,
-	color: 'blue',
+	color: 'magenta',
 	projectile: 'basic',
-	cooldown: 30,
+	cooldown: 10,
+	spreadAngle: 0,
 };
+
+// damage
+// rate
+// spread
+// fire mode (burst vs automatic)
 
 export const allGunData = {
-	revolver,
-	machineGun,
-	rifle,
-	enemyGun,
+	revolver: {
+		...defaults,
+		name: 'Revolver',
+		imageSrc: ASSETS.GFX.REVOLVER,
+		audioSrc: ASSETS.SFX.SHOOT_1,
+		color: 'pink',
+		cooldown: 20,
+		spreadAngle: 4,
+	} as GunData,
+	machineGun: {
+		...defaults,
+		name: 'Machine Gun',
+		imageSrc: ASSETS.GFX.MACHINE_GUN,
+		audioSrc: ASSETS.SFX.SHOOT_2,
+		color: 'yellow',
+		projectile: 'machine-gun',
+		cooldown: 6,
+		spreadAngle: 6,
+	} as GunData,
+	rifle: {
+		...defaults,
+		name: 'Rifle',
+		imageSrc: ASSETS.GFX.SHOTGUN,
+		audioSrc: ASSETS.SFX.SHOOT_3,
+		color: 'silver',
+		projectile: 'rifle',
+		cooldown: 30,
+	} as GunData,
+	enemyGun: {
+		...defaults,
+		name: 'Enemy Gun',
+		imageSrc: ASSETS.GFX.ENEMY_GUN,
+		audioSrc: ASSETS.SFX.SHOOT_1,
+		color: 'blue',
+		projectile: 'basic',
+		cooldown: 30,
+	} as GunData,
 } as const;
 
 export const renderGun = (ctx: Ctx, camera: Camera, owner: Actor) => {
