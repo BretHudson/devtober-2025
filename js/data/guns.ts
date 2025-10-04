@@ -1,12 +1,12 @@
+import { Vec2 } from 'canvas-lord/math';
 import { radToDeg } from 'canvas-lord/math/misc';
-import { Camera } from 'canvas-lord/util/camera';
-import { Ctx } from 'canvas-lord/util/canvas';
+import type { Camera } from 'canvas-lord/util/camera';
+import type { Ctx } from 'canvas-lord/util/canvas';
 import { Draw } from 'canvas-lord/util/draw';
 import { CSSColor } from 'canvas-lord/util/types';
+import type { Actor } from '~/entities/actor';
 import { assetManager, ASSETS } from '~/util/assets';
-import { Owner } from '~/util/constants';
 import { ProjectileType } from './projectiles';
-import { Vec2 } from 'canvas-lord/math';
 
 export interface GunData {
 	imageSrc: string;
@@ -43,7 +43,7 @@ export const enemyGun: GunData = {
 	cooldown: 30,
 };
 
-export const renderGun = (ctx: Ctx, camera: Camera, owner: Owner) => {
+export const renderGun = (ctx: Ctx, camera: Camera, owner: Actor) => {
 	const { gun, aim } = owner;
 	// TODO(bret): fix this
 	const asset = assetManager.sprites.get(gun.imageSrc);

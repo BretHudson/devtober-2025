@@ -7,11 +7,11 @@ import type { Ctx } from 'canvas-lord/util/canvas';
 import { Draw } from 'canvas-lord/util/draw';
 import { healthComponent, renderHealth } from '~/components/health';
 import { GunData, renderGun, revolver } from '~/data/guns';
-import { BaseEntity } from '~/entities/base-entity';
+import { Actor } from '~/entities/actor';
 import type { Gun } from '~/entities/gun';
+import { POWERUP, Powerup } from '~/entities/powerup';
 import { Projectile } from '~/entities/projectile';
 import { COLLIDER_TAG, DEPTH } from '~/util/constants';
-import { POWERUP, Powerup } from './powerup';
 import { Timer } from '~/util/timer';
 
 function getAxis(input: Input, neg: Key[], pos: Key[]) {
@@ -23,13 +23,9 @@ const rightKeys: Key[] = ['ArrowRight', 'KeyD'];
 const upKeys: Key[] = ['ArrowUp', 'KeyW'];
 const downKeys: Key[] = ['ArrowDown', 'KeyS'];
 
-export class Player extends BaseEntity {
-	aim = Vec2.one;
-	cooldown = new Timer();
-	gun: GunData;
-
+export class Player extends Actor {
 	constructor(x: number, y: number) {
-		super(x, y);
+		super(x, y, revolver);
 
 		const sprite = Sprite.createRect(32, 32, 'cyan');
 		sprite.centerOO();
@@ -43,8 +39,6 @@ export class Player extends BaseEntity {
 
 		this.addComponent(healthComponent);
 
-		this.gun = revolver;
-
 		this.depth = DEPTH.PLAYER;
 	}
 
@@ -52,10 +46,6 @@ export class Player extends BaseEntity {
 		const health = this.component(healthComponent);
 		if (!health) throw new Error('does not have health');
 		return health;
-	}
-
-	preUpdate(): void {
-		this.cooldown.tick();
 	}
 
 	update(input: Input): void {
@@ -71,7 +61,7 @@ export class Player extends BaseEntity {
 		this.aim = input.mouse.pos.add(this.scene.camera);
 
 		if (input.mouseCheck()) {
-			this.shoot(this.aim);
+			this.shoot(this.aim.sub(this.pos));
 		}
 
 		const gun = this.collideEntity<Gun>(this.x, this.y, COLLIDER_TAG.GUN);
@@ -120,19 +110,8 @@ export class Player extends BaseEntity {
 		if (consumed) powerup.removeSelf();
 	}
 
-	shoot(target: Vec2) {
-		if (this.cooldown.running) return;
-
-		this.scene.addEntity(
-			new Projectile(this, target.sub(this.pos), this.gun.projectile),
-		);
-
-		this.cooldown.reset(this.gun.cooldown);
-	}
-
 	render(ctx: Ctx, camera: Camera): void {
-		renderHealth(ctx, camera, this);
-		renderGun(ctx, camera, this);
+		super.render(ctx, camera);
 
 		const r = 20;
 		Draw.circle(

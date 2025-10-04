@@ -1,8 +1,3 @@
-import type { Enemy } from '~/entities/enemy';
-import type { Player } from '~/entities/player';
-
-export type Owner = Player | Enemy;
-
 export const COLLIDER_TAG = {
 	PLAYER: 'player',
 	ENEMY: 'enemy',

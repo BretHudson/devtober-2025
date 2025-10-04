@@ -4,22 +4,17 @@ import { Vec2 } from 'canvas-lord/math';
 import { Camera } from 'canvas-lord/util/camera';
 import { Ctx } from 'canvas-lord/util/canvas';
 import { Draw } from 'canvas-lord/util/draw';
-import { healthComponent, renderHealth } from '~/components/health';
-import { enemyGun, GunData, renderGun } from '~/data/guns';
-import { BaseEntity } from '~/entities/base-entity';
+import { healthComponent } from '~/components/health';
+import { enemyGun } from '~/data/guns';
 import { Projectile } from '~/entities/projectile';
 import { COLLIDER_TAG } from '~/util/constants';
-import { Timer } from '~/util/timer';
+import { Actor } from './actor';
 
 const viewRadius = 100;
 
-export class Enemy extends BaseEntity {
-	aim = Vec2.one;
-	cooldown = new Timer();
-	gun: GunData;
-
+export class Enemy extends Actor {
 	constructor(x: number, y: number) {
-		super(x, y);
+		super(x, y, enemyGun);
 
 		const sprite = Sprite.createRect(32, 32, 'orange');
 		sprite.centerOO();
@@ -32,12 +27,6 @@ export class Enemy extends BaseEntity {
 		this.colliderVisible = true;
 
 		this.addComponent(healthComponent);
-
-		this.gun = enemyGun;
-	}
-
-	preUpdate(): void {
-		this.cooldown.tick();
 	}
 
 	update(): void {
@@ -59,18 +48,12 @@ export class Enemy extends BaseEntity {
 		}
 
 		const toPlayer = this.deltaToPlayer();
-		if (this.player && toPlayer && toPlayer.magnitude < viewRadius) {
+		const canSeePlayer =
+			toPlayer !== undefined && toPlayer.magnitude < viewRadius;
+		if (this.player && canSeePlayer) {
 			this.aim = this.player.pos;
-			if (this.cooldown.running) return;
-
 			this.shoot(toPlayer);
-
-			this.cooldown.reset(30);
 		}
-	}
-
-	shoot(target: Vec2) {
-		this.scene.addEntity(new Projectile(this, target, this.gun.projectile));
 	}
 
 	render(ctx: Ctx, camera: Camera): void {
@@ -89,7 +72,6 @@ export class Enemy extends BaseEntity {
 			viewRadius,
 		);
 
-		renderHealth(ctx, camera, this);
-		renderGun(ctx, camera, this);
+		super.render(ctx, camera);
 	}
 }

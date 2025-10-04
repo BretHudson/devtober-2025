@@ -7,17 +7,18 @@ import {
 	ProjectileType,
 	projectiles,
 } from '~/data/projectiles';
+import type { Actor } from '~/entities/actor';
 import { BaseEntity } from '~/entities/base-entity';
-import { COLLIDER_TAG, Owner } from '~/util/constants';
+import { COLLIDER_TAG } from '~/util/constants';
 
 export class Projectile extends BaseEntity {
 	timer = 60;
 	dir: Vec2;
 	speed: number;
-	owner: Owner;
+	owner: Actor;
 	type: ProjectileFlyweight;
 
-	constructor(owner: Owner, dir: Vec2, typeName: ProjectileType) {
+	constructor(owner: Actor, dir: Vec2, typeName: ProjectileType) {
 		super(owner.x, owner.y);
 
 		const type = projectiles.get(typeName);
