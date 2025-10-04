@@ -11,7 +11,7 @@ import { Actor } from '~/entities/actor';
 import { Powerup, POWERUP } from '~/entities/powerup';
 import { assetManager, ASSETS } from '~/util/assets';
 import { COLLIDER_TAG } from '~/util/constants';
-import { SEEDS } from '~/util/seeds';
+import { SEEDS } from '~/util/random';
 
 const viewRadius = 100;
 

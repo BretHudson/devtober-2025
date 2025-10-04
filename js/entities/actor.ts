@@ -11,7 +11,7 @@ import { BaseEntity } from '~/entities/base-entity';
 import { Projectile } from '~/entities/projectile';
 import { assetManager, ASSETS } from '~/util/assets';
 import { COLLIDER_TAG } from '~/util/constants';
-import { randomSpreadAngle } from '~/util/seeds';
+import { randomSpreadAngle } from '~/util/random';
 import { Timer } from '~/util/timer';
 import type { DamageInfo } from '~/util/types';
 
