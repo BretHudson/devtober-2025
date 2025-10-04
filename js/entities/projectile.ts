@@ -2,7 +2,11 @@ import type { Input } from 'canvas-lord';
 import { BoxCollider } from 'canvas-lord/collider';
 import { Sprite } from 'canvas-lord/graphic';
 import { Vec2 } from 'canvas-lord/math';
-import { ProjectileType, projectiles } from '~/data/projectiles';
+import {
+	ProjectileFlyweight,
+	ProjectileType,
+	projectiles,
+} from '~/data/projectiles';
 import { BaseEntity } from '~/entities/base-entity';
 import { COLLIDER_TAG, Owner } from '~/util/constants';
 
@@ -11,12 +15,15 @@ export class Projectile extends BaseEntity {
 	dir: Vec2;
 	speed: number;
 	owner: Owner;
+	type: ProjectileFlyweight;
 
 	constructor(owner: Owner, dir: Vec2, typeName: ProjectileType) {
 		super(owner.x, owner.y);
 
 		const type = projectiles.get(typeName);
 		if (!type) throw new Error(`Missing ${typeName} projectile type`);
+
+		this.type = type;
 
 		const sprite = Sprite.createRect(8, 8, type.color);
 		sprite.centerOO();

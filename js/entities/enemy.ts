@@ -49,7 +49,8 @@ export class Enemy extends BaseEntity {
 			bullet.removeSelf();
 
 			const health = this.component(healthComponent)!;
-			if (--health.cur <= 0) {
+			health.cur -= bullet.type.damage;
+			if (health.cur <= 0) {
 				this.removeSelf();
 				return;
 			}

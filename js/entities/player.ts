@@ -66,6 +66,7 @@ export class Player extends BaseEntity {
 		const gun = this.collideEntity<Gun>(this.x, this.y, COLLIDER_TAG.GUN);
 		if (gun && input.keyPressed('KeyE')) {
 			this.gun = gun.gunData;
+			this.cooldown = 0;
 		}
 
 		const bullet = this.collideEntity<Projectile>(
@@ -77,7 +78,8 @@ export class Player extends BaseEntity {
 			bullet.removeSelf();
 
 			const health = this.component(healthComponent)!;
-			if (--health.cur <= 0) {
+			health.cur -= bullet.type.damage;
+			if (health.cur <= 0) {
 				this.scene.removePlayer();
 				return;
 			}
@@ -91,7 +93,7 @@ export class Player extends BaseEntity {
 			new Projectile(this, target.sub(this.pos), this.gun.projectile),
 		);
 
-		this.cooldown = 10;
+		this.cooldown = this.gun.cooldown;
 	}
 
 	render(ctx: Ctx): void {

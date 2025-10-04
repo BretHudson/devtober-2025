@@ -10,30 +10,35 @@ export interface GunData {
 	imageSrc: string;
 	color: CSSColor;
 	projectile: ProjectileType;
+	cooldown: number;
 }
 
 export const revolver: GunData = {
 	imageSrc: ASSETS.GFX.REVOLVER,
 	color: 'pink',
-	projectile: 'superb',
+	projectile: 'revolver',
+	cooldown: 20,
 };
 
 export const machineGun: GunData = {
 	imageSrc: ASSETS.GFX.MACHINE_GUN,
 	color: 'yellow',
-	projectile: 'superb',
+	projectile: 'machine-gun',
+	cooldown: 6,
 };
 
 export const rifle: GunData = {
 	imageSrc: ASSETS.GFX.SHOTGUN,
 	color: 'silver',
-	projectile: 'superb',
+	projectile: 'rifle',
+	cooldown: 30,
 };
 
 export const enemyGun: GunData = {
 	imageSrc: ASSETS.GFX.ENEMY_GUN,
 	color: 'blue',
 	projectile: 'basic',
+	cooldown: 30,
 };
 
 export const renderGun = (ctx: Ctx, owner: Owner) => {
