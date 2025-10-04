@@ -21,8 +21,8 @@ assetManager.onLoad.add(() => {
 		backgroundColor: '#323232',
 		assetManager,
 	});
-	const center = new Vec2(game.width, game.height).invScale(2);
-	const fourth = center.invScale(2);
+
+	const fourth = new Vec2(game.width, game.height).invScale(4);
 
 	const createPattern = () => {
 		const offscreenCanvas = new OffscreenCanvas(128, 128);
@@ -42,20 +42,20 @@ assetManager.onLoad.add(() => {
 
 	const scene = new GameScene();
 
-	scene.player = new Player(center.x, center.y);
+	scene.player = new Player(0, 0);
 	scene.addEntity(scene.player);
 	scene.follow(scene.player);
 
-	scene.addEntity(new Powerup('heal', center.x, center.y - fourth.y * 1.2));
+	scene.addEntity(new Powerup('heal', 0, -fourth.y * 1.2));
 
-	scene.addEntity(new Enemy(center.x - fourth.x, center.y - fourth.y));
-	scene.addEntity(new Enemy(center.x - fourth.x, center.y + fourth.y));
-	scene.addEntity(new Enemy(center.x + fourth.x, center.y + fourth.y));
-	scene.addEntity(new Enemy(center.x + fourth.x, center.y - fourth.y));
+	scene.addEntity(new Enemy(fourth.x, fourth.y));
+	scene.addEntity(new Enemy(fourth.x, -fourth.y));
+	scene.addEntity(new Enemy(-fourth.x, -fourth.y));
+	scene.addEntity(new Enemy(-fourth.x, fourth.y));
 
 	[revolver, machineGun, rifle].forEach((g, i) => {
 		const x = positionItemInRow(i, 3, 16, 48);
-		scene.addEntity(new Gun(g, center.x + x, center.y + fourth.y * 1.3));
+		scene.addEntity(new Gun(g, x, fourth.y * 1.3));
 	});
 
 	const pattern = createPattern();

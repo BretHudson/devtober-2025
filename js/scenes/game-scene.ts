@@ -9,7 +9,7 @@ export class GameScene extends Scene {
 	constructor() {
 		super();
 
-		this.bounds = [-200, -200, 1000, 1000];
+		this.bounds = [-400, -300, 400, 300];
 	}
 
 	postUpdate(): void {
@@ -29,8 +29,8 @@ export class GameScene extends Scene {
 				target = target.add(offset);
 			}
 
-			newX = target.x - this.engine.halfWidth;
-			newY = target.y - this.engine.halfHeight;
+			newX = target.x;
+			newY = target.y;
 		}
 
 		if (this.bounds) {
@@ -38,8 +38,8 @@ export class GameScene extends Scene {
 			newY = Math.clamp(newY, this.bounds[1], this.bounds[3]);
 		}
 
-		this.camera.x = newX;
-		this.camera.y = newY;
+		this.camera.x = newX - this.engine.halfWidth;
+		this.camera.y = newY - this.engine.halfHeight;
 	}
 
 	removePlayer() {
