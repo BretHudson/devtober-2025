@@ -1,5 +1,5 @@
 import { Entity } from 'canvas-lord/core/entity';
-import { GameScene } from '~/.';
+import type { GameScene } from '~/scenes/game-scene';
 
 export class BaseEntity extends Entity<GameScene> {
 	get player() {
