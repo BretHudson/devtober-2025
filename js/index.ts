@@ -6,40 +6,10 @@ import { Enemy } from '~/entities/enemy';
 import { Gun } from './entities/gun';
 import { positionItemInRow } from './util/math';
 import { machineGun, revolver, rifle } from './data/guns';
-
-const game = new Game('game', {
-	fps: 60,
-	backgroundColor: '#323232',
-});
-
-const center = new Vec2(game.width, game.height).invScale(2);
-const fourth = center.invScale(2);
-
-const createPattern = () => {
-	const offscreenCanvas = new OffscreenCanvas(128, 128);
-	const offscreenCtx = offscreenCanvas.getContext('2d');
-	if (!offscreenCtx) throw new Error('could not create offscreen canvas');
-	offscreenCtx.fillStyle = '#4056aa';
-	offscreenCtx.fillRect(0, 0, 128, 128);
-	for (let x = 128; x >= 0; x -= 32) {
-		offscreenCtx.fillStyle = x === 0 ? '#6179CF' : '#5168BD';
-		offscreenCtx.fillRect(x, 0, 1, 128);
-		offscreenCtx.fillRect(0, x, 128, 1);
-	}
-	const pattern = offscreenCtx.createPattern(offscreenCanvas, 'repeat');
-	if (!pattern) throw new Error('pattern could not be created');
-	return pattern;
-};
+import { assetManager, ASSETS } from './util/assets';
 
 export class GameScene extends Scene {
-	player: Player | null;
-
-	constructor() {
-		super();
-
-		this.player = new Player(center.x, center.y);
-		this.addEntity(this.player);
-	}
+	player: Player | null = null;
 
 	removePlayer() {
 		if (!this.player) return;
@@ -49,23 +19,59 @@ export class GameScene extends Scene {
 	}
 }
 
-const scene = new GameScene();
-
-scene.addEntity(new Enemy(center.x - fourth.x, center.y - fourth.y));
-scene.addEntity(new Enemy(center.x - fourth.x, center.y + fourth.y));
-scene.addEntity(new Enemy(center.x + fourth.x, center.y + fourth.y));
-scene.addEntity(new Enemy(center.x + fourth.x, center.y - fourth.y));
-
-[revolver, machineGun, rifle].forEach((g, i) => {
-	const x = positionItemInRow(i, 3, 16, 48);
-	scene.addEntity(new Gun(center.x + x, center.y + fourth.y * 1.3, g));
+// load assets
+Object.values(ASSETS.GFX).forEach((asset) => {
+	assetManager.addImage(asset);
 });
 
-const pattern = createPattern();
-scene.onRender.add((ctx) => {
-	ctx.fillStyle = pattern;
-	ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-});
-game.pushScene(scene);
+let game;
+assetManager.onLoad.add(() => {
+	game = new Game('game', {
+		fps: 60,
+		backgroundColor: '#323232',
+		assetManager,
+	});
+	const center = new Vec2(game.width, game.height).invScale(2);
+	const fourth = center.invScale(2);
 
-game.start();
+	const createPattern = () => {
+		const offscreenCanvas = new OffscreenCanvas(128, 128);
+		const offscreenCtx = offscreenCanvas.getContext('2d');
+		if (!offscreenCtx) throw new Error('could not create offscreen canvas');
+		offscreenCtx.fillStyle = '#4056aa';
+		offscreenCtx.fillRect(0, 0, 128, 128);
+		for (let x = 128; x >= 0; x -= 32) {
+			offscreenCtx.fillStyle = x === 0 ? '#6179CF' : '#5168BD';
+			offscreenCtx.fillRect(x, 0, 1, 128);
+			offscreenCtx.fillRect(0, x, 128, 1);
+		}
+		const pattern = offscreenCtx.createPattern(offscreenCanvas, 'repeat');
+		if (!pattern) throw new Error('pattern could not be created');
+		return pattern;
+	};
+
+	const scene = new GameScene();
+
+	scene.player = new Player(center.x, center.y);
+	scene.addEntity(scene.player);
+
+	scene.addEntity(new Enemy(center.x - fourth.x, center.y - fourth.y));
+	scene.addEntity(new Enemy(center.x - fourth.x, center.y + fourth.y));
+	scene.addEntity(new Enemy(center.x + fourth.x, center.y + fourth.y));
+	scene.addEntity(new Enemy(center.x + fourth.x, center.y - fourth.y));
+
+	[revolver, machineGun, rifle].forEach((g, i) => {
+		const x = positionItemInRow(i, 3, 16, 48);
+		scene.addEntity(new Gun(center.x + x, center.y + fourth.y * 1.3, g));
+	});
+
+	const pattern = createPattern();
+	scene.onRender.add((ctx) => {
+		ctx.fillStyle = pattern;
+		ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+	});
+	game.pushScene(scene);
+
+	game.start();
+});
+assetManager.loadAssets();
