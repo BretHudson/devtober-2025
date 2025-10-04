@@ -1,10 +1,12 @@
-import { CSSColor } from 'canvas-lord/util/types';
-import { ProjectileType } from './projectiles';
-import { Ctx } from 'canvas-lord/util/canvas';
-import { Owner } from '~/util/constants';
-import { Draw } from 'canvas-lord/util/draw';
-import { assetManager, ASSETS } from '~/util/assets';
 import { radToDeg } from 'canvas-lord/math/misc';
+import { Camera } from 'canvas-lord/util/camera';
+import { Ctx } from 'canvas-lord/util/canvas';
+import { Draw } from 'canvas-lord/util/draw';
+import { CSSColor } from 'canvas-lord/util/types';
+import { assetManager, ASSETS } from '~/util/assets';
+import { Owner } from '~/util/constants';
+import { ProjectileType } from './projectiles';
+import { Vec2 } from 'canvas-lord/math';
 
 export interface GunData {
 	imageSrc: string;
@@ -41,11 +43,13 @@ export const enemyGun: GunData = {
 	cooldown: 30,
 };
 
-export const renderGun = (ctx: Ctx, owner: Owner) => {
+export const renderGun = (ctx: Ctx, camera: Camera, owner: Owner) => {
 	const { gun, aim } = owner;
 	// TODO(bret): fix this
 	const asset = assetManager.sprites.get(gun.imageSrc);
 	if (!asset || !asset.image) throw new Error('');
+
+	const drawPos = new Vec2(owner.x, owner.y).sub(camera);
 
 	let offset = aim.sub(owner.pos);
 	offset.normalize();
@@ -64,7 +68,7 @@ export const renderGun = (ctx: Ctx, owner: Owner) => {
 			scaleX: flipped ? -1 : 1,
 			angle,
 		},
-		owner.x + offset.x,
-		owner.y + offset.y,
+		drawPos.x + offset.x,
+		drawPos.y + offset.y,
 	);
 };

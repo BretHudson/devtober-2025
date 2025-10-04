@@ -2,10 +2,11 @@ import type { Input, Key } from 'canvas-lord';
 import { BoxCollider } from 'canvas-lord/collider';
 import { Sprite } from 'canvas-lord/graphic';
 import { Vec2 } from 'canvas-lord/math';
+import { Camera } from 'canvas-lord/util/camera';
 import type { Ctx } from 'canvas-lord/util/canvas';
 import { Draw } from 'canvas-lord/util/draw';
 import { healthComponent, renderHealth } from '~/components/health';
-import { GunData, revolver, renderGun } from '~/data/guns';
+import { GunData, renderGun, revolver } from '~/data/guns';
 import { BaseEntity } from '~/entities/base-entity';
 import type { Gun } from '~/entities/gun';
 import { Projectile } from '~/entities/projectile';
@@ -96,9 +97,9 @@ export class Player extends BaseEntity {
 		this.cooldown = this.gun.cooldown;
 	}
 
-	render(ctx: Ctx): void {
-		renderHealth(ctx, this);
-		renderGun(ctx, this);
+	render(ctx: Ctx, camera: Camera): void {
+		renderHealth(ctx, camera, this);
+		renderGun(ctx, camera, this);
 
 		const r = 20;
 		Draw.circle(

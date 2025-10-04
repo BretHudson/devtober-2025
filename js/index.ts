@@ -1,5 +1,4 @@
 import { Game } from 'canvas-lord/core/engine';
-import { Scene } from 'canvas-lord/core/scene';
 import { Vec2 } from 'canvas-lord/math';
 import { Player } from '~/entities/player';
 import { Enemy } from '~/entities/enemy';
@@ -7,17 +6,7 @@ import { Gun } from './entities/gun';
 import { positionItemInRow } from './util/math';
 import { machineGun, revolver, rifle } from './data/guns';
 import { assetManager, ASSETS } from './util/assets';
-
-export class GameScene extends Scene {
-	player: Player | null = null;
-
-	removePlayer() {
-		if (!this.player) return;
-
-		this.player.removeSelf();
-		this.player = null;
-	}
-}
+import { GameScene } from './scenes/game-scene';
 
 // load assets
 Object.values(ASSETS.GFX).forEach((asset) => {
@@ -52,8 +41,10 @@ assetManager.onLoad.add(() => {
 
 	const scene = new GameScene();
 
-	scene.player = new Player(center.x, center.y);
+	// scene.player = new Player(center.x, center.y);
+	scene.player = new Player(center.x + 100, center.y + 100);
 	scene.addEntity(scene.player);
+	scene.follow(scene.player);
 
 	scene.addEntity(new Enemy(center.x - fourth.x, center.y - fourth.y));
 	scene.addEntity(new Enemy(center.x - fourth.x, center.y + fourth.y));

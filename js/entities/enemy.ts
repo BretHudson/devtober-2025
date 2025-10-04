@@ -1,6 +1,7 @@
 import { BoxCollider } from 'canvas-lord/collider';
 import { Sprite } from 'canvas-lord/graphic';
 import { Vec2 } from 'canvas-lord/math';
+import { Camera } from 'canvas-lord/util/camera';
 import { Ctx } from 'canvas-lord/util/canvas';
 import { Draw } from 'canvas-lord/util/draw';
 import { healthComponent, renderHealth } from '~/components/health';
@@ -71,7 +72,9 @@ export class Enemy extends BaseEntity {
 		this.scene.addEntity(new Projectile(this, target, this.gun.projectile));
 	}
 
-	render(ctx: Ctx): void {
+	render(ctx: Ctx, camera: Camera): void {
+		const drawPos = new Vec2(this.x, this.y).sub(camera);
+
 		Draw.circle(
 			ctx,
 			{
@@ -80,12 +83,12 @@ export class Enemy extends BaseEntity {
 				originY: viewRadius,
 				type: 'stroke',
 			},
-			this.x,
-			this.y,
+			drawPos.x,
+			drawPos.y,
 			viewRadius,
 		);
 
-		renderHealth(ctx, this);
-		renderGun(ctx, this);
+		renderHealth(ctx, camera, this);
+		renderGun(ctx, camera, this);
 	}
 }
