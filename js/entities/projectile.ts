@@ -1,4 +1,3 @@
-import type { Input } from 'canvas-lord';
 import { BoxCollider } from 'canvas-lord/collider';
 import { Sprite } from 'canvas-lord/graphic';
 import { Vec2 } from 'canvas-lord/math';
@@ -10,9 +9,10 @@ import {
 import type { Actor } from '~/entities/actor';
 import { BaseEntity } from '~/entities/base-entity';
 import { COLLIDER_TAG } from '~/util/constants';
+import { Timer } from '~/util/timer';
 
 export class Projectile extends BaseEntity {
-	timer = 60;
+	timer: Timer;
 	dir: Vec2;
 	speed: number;
 	owner: Actor;
@@ -25,6 +25,13 @@ export class Projectile extends BaseEntity {
 		if (!type) throw new Error(`Missing ${typeName} projectile type`);
 
 		this.type = type;
+
+		// timer logic
+		this.timer = new Timer(60);
+		this.timer.onFinish.add(() => {
+			this.removeSelf();
+		});
+		this.onPostUpdate.add(() => this.timer.tick());
 
 		const sprite = Sprite.createRect(8, 8, type.color);
 		sprite.centerOO();
@@ -59,12 +66,5 @@ export class Projectile extends BaseEntity {
 
 	hitWall(): void {
 		this.removeSelf();
-	}
-
-	postUpdate(_input: Input): void {
-		if (--this.timer <= 0) {
-			this.scene.removeEntity(this);
-			this.scene.removeRenderable(this);
-		}
 	}
 }
