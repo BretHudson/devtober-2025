@@ -25,7 +25,7 @@ export class Enemy extends Actor {
 		if (!asset) throw new Error();
 		const sprite = new Sprite(asset);
 		sprite.centerOO();
-		this.addGraphic(sprite);
+		this.graphic = sprite;
 
 		const collider = new BoxCollider(48, 48);
 		collider.tag = COLLIDER_TAG.ENEMY;
@@ -37,8 +37,6 @@ export class Enemy extends Actor {
 	}
 
 	update(): void {
-		super.update();
-
 		const toPlayer = this.deltaToPlayer();
 		const canSeePlayer =
 			toPlayer !== undefined && toPlayer.magnitude < viewRadius;
@@ -46,6 +44,8 @@ export class Enemy extends Actor {
 			this.aim = this.player.pos;
 			this.shoot(toPlayer);
 		}
+
+		super.update();
 	}
 
 	die(): void {

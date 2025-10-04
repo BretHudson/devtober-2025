@@ -37,7 +37,7 @@ export class Player extends Actor {
 		if (!asset) throw new Error();
 		const sprite = new Sprite(asset);
 		sprite.centerOO();
-		this.addGraphic(sprite);
+		this.graphic = sprite;
 
 		const collider = new BoxCollider(32, 32);
 		collider.tag = COLLIDER_TAG.PLAYER;
@@ -105,19 +105,11 @@ export class Player extends Actor {
 		);
 		if (powerup) this.processPowerup(powerup);
 
-		const bullet = this.collideEntity<Projectile>(
-			this.x,
-			this.y,
-			COLLIDER_TAG.ENEMY_PROJECTILE,
-		);
-		if (bullet) {
-			bullet.removeSelf();
-			this.health.cur -= bullet.type.damage;
-			if (this.health.cur <= 0) {
-				this.scene.removePlayer();
-				return;
-			}
-		}
+		super.update();
+	}
+
+	die(): void {
+		this.scene.removePlayer();
 	}
 
 	processPowerup(powerup: Powerup) {

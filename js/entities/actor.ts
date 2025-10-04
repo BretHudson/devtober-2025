@@ -1,4 +1,5 @@
 import { Input } from 'canvas-lord/core/input';
+import type { Sprite } from 'canvas-lord/graphic';
 import { Vec2 } from 'canvas-lord/math';
 import type { Camera } from 'canvas-lord/util/camera';
 import type { Ctx } from 'canvas-lord/util/canvas';
@@ -17,6 +18,12 @@ export class Actor extends BaseEntity {
 	gun: GunData;
 	hurtBy: HurtBy;
 
+	hitStunTimer = new Timer(100);
+
+	get sprite() {
+		return this.graphic as Sprite;
+	}
+
 	constructor(x: number, y: number, gun: GunData, hurtBy: HurtBy) {
 		super(x, y);
 
@@ -25,10 +32,15 @@ export class Actor extends BaseEntity {
 		this.gun = gun;
 
 		this.hurtBy = hurtBy;
+
+		this.hitStunTimer.onFinish.add(() => {
+			this.sprite.color = undefined;
+		});
 	}
 
 	preUpdate(): void {
 		this.cooldown.tick();
+		this.hitStunTimer.tick();
 	}
 
 	update(_input?: Input) {
@@ -44,6 +56,10 @@ export class Actor extends BaseEntity {
 	takeDamage(damageInfo: DamageInfo) {
 		const health = this.component(healthComponent)!;
 		health.cur -= damageInfo.damage;
+
+		this.hitStunTimer.reset(4);
+		this.sprite.color = 'white';
+
 		if (health.cur <= 0) {
 			this.die();
 			return;
