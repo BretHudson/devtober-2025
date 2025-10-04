@@ -6,6 +6,8 @@ export const COLLIDER_TAG = {
 
 	GUN: 'gun',
 	POWERUP: 'powerup',
+
+	WALL: 'wall',
 } as const;
 
 export const DEPTH = {

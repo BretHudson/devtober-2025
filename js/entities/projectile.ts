@@ -58,6 +58,8 @@ export class Projectile extends BaseEntity {
 	update(): void {
 		this.x += this.dir.x * this.speed;
 		this.y += this.dir.y * this.speed;
+
+		if (this.collide(this.x, this.y, COLLIDER_TAG.WALL)) this.hitWall();
 	}
 
 	hitActor(): void {

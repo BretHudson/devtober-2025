@@ -1,16 +1,18 @@
-import type { Entity } from 'canvas-lord/core/entity';
+import { GridCollider } from 'canvas-lord/collider';
+import { Entity } from 'canvas-lord/core/entity';
 import { Input, Keys } from 'canvas-lord/core/input';
 import { Scene } from 'canvas-lord/core/scene';
 import { Vec2 } from 'canvas-lord/math';
 import type { Ctx } from 'canvas-lord/util/canvas';
 import { Draw } from 'canvas-lord/util/draw';
+import { Grid } from 'canvas-lord/util/grid';
 import { allGunData } from '~/data/guns';
 import { Enemy } from '~/entities/enemy';
 import { Gun } from '~/entities/gun';
 import { Player } from '~/entities/player';
 import { POWERUP, Powerup } from '~/entities/powerup';
 import { renderPattern } from '~/util/background-pattern';
-import { FONTS } from '~/util/constants';
+import { COLLIDER_TAG, FONTS } from '~/util/constants';
 import { positionItemInRow } from '~/util/math';
 
 export class GameScene extends Scene {
@@ -20,13 +22,40 @@ export class GameScene extends Scene {
 	constructor() {
 		super();
 
-		this.bounds = [-400, -300, 400, 300];
+		const SIZE = 32;
+		const col = 34;
+		const row = 26;
+		this.bounds = [-col, -row, col, row].map(
+			(v) => (v * SIZE) / 2,
+		) as Exclude<typeof this.bounds, null>;
+
+		const grid = new Grid(col * SIZE, row * SIZE, SIZE, SIZE);
+		for (let x = 0; x < col; ++x) {
+			grid.setTile(x, 0, 1);
+			grid.setTile(x, row - 1, 1);
+		}
+		for (let y = 0; y < row; ++y) {
+			grid.setTile(0, y, 1);
+			grid.setTile(col - 1, y, 1);
+		}
+		const walls = new Entity();
+
+		const wallCollider = new GridCollider(
+			grid,
+			this.bounds[0],
+			this.bounds[1],
+		);
+		wallCollider.tag = COLLIDER_TAG.WALL;
+		walls.collider = wallCollider;
+		walls.colliderVisible = true;
+		this.addEntity(walls);
 	}
 
 	begin(): void {
-		const fourth = new Vec2(this.engine.width, this.engine.height).invScale(
-			4,
-		);
+		const quarterSize = new Vec2(
+			this.engine.width,
+			this.engine.height,
+		).invScale(4);
 
 		const { enemyGun, machineGun, revolver, rifle } = allGunData;
 
@@ -34,16 +63,16 @@ export class GameScene extends Scene {
 		this.addEntity(this.player);
 		this.follow(this.player);
 
-		this.addEntity(new Powerup(POWERUP.SPEED_UP, 0, -fourth.y * 1.2));
+		this.addEntity(new Powerup(POWERUP.SPEED_UP, 0, -quarterSize.y * 1.2));
 
-		this.addEntity(new Enemy(fourth.x, fourth.y, enemyGun));
-		this.addEntity(new Enemy(fourth.x, -fourth.y, enemyGun));
-		this.addEntity(new Enemy(-fourth.x, -fourth.y, enemyGun));
-		this.addEntity(new Enemy(-fourth.x, fourth.y, enemyGun));
+		this.addEntity(new Enemy(quarterSize.x, quarterSize.y, enemyGun));
+		this.addEntity(new Enemy(quarterSize.x, -quarterSize.y, enemyGun));
+		this.addEntity(new Enemy(-quarterSize.x, -quarterSize.y, enemyGun));
+		this.addEntity(new Enemy(-quarterSize.x, quarterSize.y, enemyGun));
 
 		[revolver, machineGun, rifle].forEach((g, i) => {
 			const x = positionItemInRow(i, 3, 16, 48);
-			this.addEntity(new Gun(g, x, fourth.y * 1.3));
+			this.addEntity(new Gun(g, x, quarterSize.y * 1.3));
 		});
 
 		this.onRender.add(renderPattern(this));
@@ -106,8 +135,16 @@ export class GameScene extends Scene {
 		newY = target.y;
 
 		if (this.bounds) {
-			newX = Math.clamp(newX, this.bounds[0], this.bounds[2]);
-			newY = Math.clamp(newY, this.bounds[1], this.bounds[3]);
+			newX = Math.clamp(
+				newX,
+				this.bounds[0] + this.engine.halfWidth,
+				this.bounds[2] - this.engine.halfWidth,
+			);
+			newY = Math.clamp(
+				newY,
+				this.bounds[1] + this.engine.halfHeight,
+				this.bounds[3] - this.engine.halfHeight,
+			);
 		}
 
 		this.camera.x = newX - this.engine.halfWidth;

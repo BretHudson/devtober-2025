@@ -2,6 +2,7 @@ import { Sprite } from 'canvas-lord/graphic/sprite';
 import { BaseEntity } from './base-entity';
 import { CircleCollider } from 'canvas-lord/collider';
 import { COLLIDER_TAG } from '~/util/constants';
+import { CSSColor } from 'canvas-lord/util/types';
 
 export const POWERUP = {
 	HEAL: 'heal',
@@ -27,16 +28,20 @@ export class Powerup extends BaseEntity {
 
 		this.type = type;
 
+		let color: CSSColor;
 		switch (type) {
 			case POWERUP.HEAL:
-				sprite.color = 'red';
+				color = 'red';
 				break;
 			case POWERUP.SPEED_UP: {
-				sprite.color = '#77f';
+				color = '#77f';
 				break;
 			}
 			default:
 				throw new Error(`unsupported powerup "${type}"`);
 		}
+
+		sprite.color = color;
+		collider.color = color;
 	}
 }
