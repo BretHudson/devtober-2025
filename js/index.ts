@@ -45,6 +45,10 @@ assetManager.onLoad.add(() => {
 		fps: 60,
 		backgroundColor: '#323232',
 		assetManager,
+		gameLoopSettings: {
+			updateMode: 'always',
+			renderMode: 'onUpdate',
+		},
 	});
 
 	game.pushScene(new GameScene());
