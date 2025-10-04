@@ -17,6 +17,11 @@ export class Timer {
 		return this.timeLeft <= 0;
 	}
 
+	get percentLeft() {
+		if (this.timeLeft <= 0) return 0;
+		return this.timeLeft / this.duration;
+	}
+
 	tick() {
 		--this.timeLeft;
 		if (this.timeLeft === 0) {

@@ -3,7 +3,6 @@ import { healthComponent } from '~/components/health';
 import { BaseEntity } from '~/entities/base-entity';
 import { DEPTH } from '~/util/constants';
 
-const padding = 30;
 export class HUD extends BaseEntity {
 	get player() {
 		return this.scene.player!;
@@ -18,15 +17,22 @@ export class HUD extends BaseEntity {
 	}
 
 	healthSprites: Sprite[] = [];
+	statusBGSprites: Sprite[] = [];
+	statusSprites: Sprite[] = [];
 
 	constructor() {
 		super();
 
 		this.graphic = new GraphicList();
 		this.depth = DEPTH.HUD;
+
+		this.addStatusSprite(0);
+		this.addStatusSprite(1);
+		this.addStatusSprite(2);
 	}
 
 	addHealthSprite(index: number) {
+		const padding = 30;
 		const x = index * padding;
 		const health = Sprite.createCircle(20, 'white');
 		health.x = x;
@@ -37,8 +43,29 @@ export class HUD extends BaseEntity {
 		this.graphic.add(health);
 	}
 
+	addStatusSprite(index: number) {
+		const padding = 18;
+		const x = 10;
+		const y = 10 + 30 + index * padding;
+
+		const bg = Sprite.createRect(100, 10, 'black');
+		bg.x = x;
+		bg.y = y;
+		bg.scrollX = bg.scrollY = 0;
+		this.statusBGSprites.push(bg);
+
+		const status = Sprite.createRect(100 - 4, 10 - 4, 'white');
+		status.x = x + 2;
+		status.y = y + 2;
+		status.scrollX = status.scrollY = 0;
+		this.statusSprites.push(status);
+
+		this.graphic.add(bg, status);
+	}
+
 	postUpdate(): void {
 		this.updateHealth();
+		this.updateStatuses();
 	}
 
 	updateHealth() {
@@ -52,5 +79,21 @@ export class HUD extends BaseEntity {
 			sprite.color = health.cur > i ? 'red' : 'gray';
 			sprite.visible = health.max > i;
 		});
+	}
+
+	updateStatuses() {
+		const { statuses } = this.player;
+		this.statusSprites.forEach((sprite, i) => {
+			const bg = this.statusBGSprites[i];
+			const status = statuses[i];
+			if (status === undefined) {
+				sprite.visible = bg.visible = false;
+				return;
+			}
+			sprite.visible = bg.visible = true;
+
+			sprite.scaleX = status.timer.percentLeft;
+		});
+		statuses.forEach((status, i) => {});
 	}
 }

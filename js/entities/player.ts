@@ -148,14 +148,34 @@ export class Player extends Actor {
 	addStatus(powerup: PowerupData, callback?: () => void) {
 		if (powerup.type !== 'status') return;
 
+		// check if we already have one of that type
+		if (!powerup.stacks) {
+			const existingStatus = this.statuses.find(
+				(status) => status.powerup === powerup,
+			);
+			if (existingStatus) {
+				existingStatus.timer.restart();
+				return;
+			}
+		}
+
 		const timer = new Timer(60 * 5);
+		const status: StatusEffect = {
+			powerup,
+			timer,
+		};
+		timer.onFinish.add(() => this.removeStatus(status));
 		if (callback) timer.onFinish.add(callback);
 		this.addTimer(timer);
 
-		this.statuses.push({
-			powerup,
-			timer,
-		});
+		this.statuses.push(status);
+	}
+
+	removeStatus(status: StatusEffect) {
+		const index = this.statuses.indexOf(status);
+		if (index < 0) return;
+
+		this.statuses.splice(index, 1);
 	}
 
 	processPowerup(powerupEntity: Powerup) {

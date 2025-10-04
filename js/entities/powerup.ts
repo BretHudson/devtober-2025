@@ -15,6 +15,7 @@ export type PowerupData = {
 	| {
 			type: 'status';
 			duration: number;
+			stacks: boolean;
 	  }
 );
 
@@ -31,6 +32,7 @@ export const POWERUP = {
 		color: '#77f',
 		type: 'status',
 		duration: 5, // seconds
+		stacks: false,
 	} as PowerupData,
 } as const;
 
