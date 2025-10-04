@@ -4,15 +4,20 @@ import { Vec2 } from 'canvas-lord/math';
 import type { Camera } from 'canvas-lord/util/camera';
 import type { Ctx } from 'canvas-lord/util/canvas';
 import { Draw } from 'canvas-lord/util/draw';
+import { Random } from 'canvas-lord/util/random';
 import { healthComponent } from '~/components/health';
 import { GunData } from '~/data/guns';
 import { Actor } from '~/entities/actor';
+import { Powerup, POWERUP } from '~/entities/powerup';
 import { assetManager, ASSETS } from '~/util/assets';
 import { COLLIDER_TAG } from '~/util/constants';
+import { SEEDS } from '~/util/seeds';
 
 const viewRadius = 100;
 
 export class Enemy extends Actor {
+	static dropRandom = new Random(SEEDS.ENEMY_DROP);
+
 	constructor(x: number, y: number, gun: GunData) {
 		super(x, y, gun, COLLIDER_TAG.PROJECTILE);
 
@@ -41,6 +46,17 @@ export class Enemy extends Actor {
 			this.aim = this.player.pos;
 			this.shoot(toPlayer);
 		}
+	}
+
+	die(): void {
+		if (Enemy.dropRandom.chance(1, 2)) {
+			const powerupType = Enemy.dropRandom.choose([
+				POWERUP.HEAL,
+				POWERUP.SPEED_UP,
+			]);
+			this.scene.addEntity(new Powerup(powerupType, this.x, this.y));
+		}
+		super.die();
 	}
 
 	render(ctx: Ctx, camera: Camera): void {

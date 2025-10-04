@@ -34,8 +34,7 @@ export class GameScene extends Scene {
 		this.addEntity(this.player);
 		this.follow(this.player);
 
-		this.addEntity(new Powerup(POWERUP.HEAL, 0, -fourth.y * 1.2));
-		this.addEntity(new Powerup(POWERUP.SPEED_UP, 0, -fourth.y * 0.9));
+		this.addEntity(new Powerup(POWERUP.SPEED_UP, 0, -fourth.y * 1.2));
 
 		this.addEntity(new Enemy(fourth.x, fourth.y, enemyGun));
 		this.addEntity(new Enemy(fourth.x, -fourth.y, enemyGun));
