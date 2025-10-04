@@ -50,13 +50,14 @@ export class Player extends Actor {
 	constructor(x: number, y: number, gun: GunData) {
 		super(x, y, gun, COLLIDER_TAG.ENEMY_PROJECTILE);
 
-		const asset = assetManager.sprites.get(ASSETS.GFX.PLAYER);
+		const asset = assetManager.sprites.get(ASSETS.GFX.MOUSE);
 		if (!asset) throw new Error();
 		const sprite = new Sprite(asset);
 		sprite.centerOO();
+		sprite.originX += 15;
 		this.graphic = sprite;
 
-		const collider = new BoxCollider(18, 32);
+		const collider = new BoxCollider(24, 100);
 		collider.tag = COLLIDER_TAG.PLAYER;
 		collider.centerOO();
 		this.collider = collider;
@@ -89,17 +90,23 @@ export class Player extends Actor {
 		this.timers.splice(index, 1);
 	}
 
+	sinTimer = 0;
+
 	update(input: Input): void {
 		const hInput = getAxis(input, leftKeys, rightKeys);
 		const vInput = getAxis(input, upKeys, downKeys);
 
 		const speed = this.speedUp ? 5 : 3;
 		let vel = new Vec2(hInput, vInput);
-		if (vel.magnitude > 0) vel.normalize();
-		vel = vel.scale(speed);
+		if (vel.magnitude > 0) {
+			this.sinTimer += 1;
 
-		this.x += vel.x;
-		this.y += vel.y;
+			vel.normalize();
+			vel = vel.scale(speed);
+
+			this.x += vel.x;
+			this.y += vel.y;
+		}
 
 		// for now, do the hacky dumb thing
 		if (this.scene.bounds) {
@@ -157,6 +164,10 @@ export class Player extends Actor {
 
 			this.sprite.color = closeToOut && flash ? 'pink' : 'deeppink';
 		}
+
+		this.sprite.scaleX = Math.sign(this.aimDir.dot(Vec2.right)) || 1;
+
+		this.sprite.angle = Math.trunc(Math.sin(this.sinTimer / 12) * 1.4) * 5;
 	}
 
 	takeDamage(damageInfo: DamageInfo): void {
