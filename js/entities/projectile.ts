@@ -53,6 +53,14 @@ export class Projectile extends BaseEntity {
 		this.y += this.dir.y * this.speed;
 	}
 
+	hitActor(): void {
+		this.removeSelf();
+	}
+
+	hitWall(): void {
+		this.removeSelf();
+	}
+
 	postUpdate(_input: Input): void {
 		if (--this.timer <= 0) {
 			this.scene.removeEntity(this);

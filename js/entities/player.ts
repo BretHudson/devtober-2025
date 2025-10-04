@@ -25,7 +25,7 @@ const downKeys: Key[] = ['ArrowDown', 'KeyS'];
 
 export class Player extends Actor {
 	constructor(x: number, y: number) {
-		super(x, y, revolver);
+		super(x, y, revolver, COLLIDER_TAG.ENEMY_PROJECTILE);
 
 		const sprite = Sprite.createRect(32, 32, 'cyan');
 		sprite.centerOO();
