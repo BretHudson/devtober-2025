@@ -9,6 +9,13 @@ const GFX = {
 	RIFLE: 'gfx/shotgun.png',
 	SHOTGUN: 'gfx/shotgun.png',
 	ENEMY_GUN: 'gfx/enemy-gun.png',
+
+	MOUSE: 'gfx/mouse.png',
+
+	MOUSE_TRAP: 'gfx/mouse-trap.png',
+	MOUSE_TRAP_2: 'gfx/mouse-trap-2.png',
+	CHEESE: 'gfx/cheese.png',
+	ROCK: 'gfx/rock.png',
 } as const;
 
 const SFX = {

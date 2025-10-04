@@ -22,13 +22,23 @@ export class Enemy extends Actor {
 	constructor(x: number, y: number, gun: GunData) {
 		super(x, y, gun, COLLIDER_TAG.PROJECTILE);
 
-		const asset = assetManager.sprites.get(ASSETS.GFX.ENEMY);
+		const asset = assetManager.sprites.get(ASSETS.GFX.MOUSE_TRAP_2);
 		if (!asset) throw new Error();
 		const sprite = new Sprite(asset);
 		sprite.centerOO();
 		this.graphic = sprite;
 
-		const collider = new BoxCollider(48, 48);
+		{
+			const asset = assetManager.sprites.get(ASSETS.GFX.CHEESE);
+			if (!asset) throw new Error();
+			const cheese = new Sprite(asset);
+			cheese.x += 1;
+			cheese.y += 12;
+			cheese.centerOO();
+			this.addGraphic(cheese);
+		}
+
+		const collider = new BoxCollider(48, 72);
 		collider.tag = COLLIDER_TAG.ENEMY;
 		collider.centerOO();
 		this.collider = collider;

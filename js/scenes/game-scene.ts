@@ -25,8 +25,8 @@ export class GameScene extends Scene {
 		super();
 
 		const SIZE = 32;
-		const col = 34;
-		const row = 26;
+		const col = 50;
+		const row = 40;
 		this.bounds = [-col, -row, col, row].map(
 			(v) => (v * SIZE) / 2,
 		) as Exclude<typeof this.bounds, null>;
@@ -59,7 +59,7 @@ export class GameScene extends Scene {
 			this.engine.height,
 		).invScale(4);
 
-		const { enemyGun, machineGun, revolver, rifle } = allGunData;
+		const { enemyGun, revolver } = allGunData;
 
 		this.addEntity(new HUD());
 

@@ -1,3 +1,4 @@
+import type { BoxCollider } from 'canvas-lord/collider';
 import { Vec2 } from 'canvas-lord/math';
 import { Camera } from 'canvas-lord/util/camera';
 import { Ctx } from 'canvas-lord/util/canvas';
@@ -19,7 +20,7 @@ export const renderHealth = (ctx: Ctx, camera: Camera, entity: Actor) => {
 	}
 
 	const drawPos = new Vec2(entity.x, entity.y).sub(camera);
-	drawPos.y -= 24;
+	drawPos.y -= (entity.collider as BoxCollider).height / 2;
 
 	const size = 4;
 	const padding = 6;

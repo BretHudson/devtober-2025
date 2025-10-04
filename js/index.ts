@@ -1,8 +1,10 @@
 import { Game } from 'canvas-lord/core/engine';
+import { Scene } from 'canvas-lord/core/scene';
 import { allGunData } from './data/guns';
 import { GameScene } from './scenes/game-scene';
 import { assetManager, ASSETS } from './util/assets';
 import { FONTS } from './util/constants';
+import { renderPattern } from './util/background-pattern';
 
 // load assets
 Object.values(ASSETS.GFX).forEach((asset) => {
@@ -26,7 +28,6 @@ assetManager.onLoad.add(() => {
 	Object.values(allGunData).forEach((gun) => {
 		try {
 			const image = assetManager.sprites.get(gun.imageSrc);
-			console.log(image);
 			if (!image) throw new Error(gun.imageSrc);
 			gun.image = image;
 
@@ -47,7 +48,7 @@ assetManager.onLoad.add(() => {
 		backgroundColor: '#323232',
 		assetManager,
 		gameLoopSettings: {
-			updateMode: 'focus',
+			updateMode: 'always',
 			renderMode: 'onUpdate',
 		},
 	});
