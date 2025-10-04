@@ -2,7 +2,6 @@ import { CircleCollider } from 'canvas-lord/collider';
 import { Sprite } from 'canvas-lord/graphic';
 import { GunData } from '~/data/guns';
 import { BaseEntity } from '~/entities/base-entity';
-import { assetManager } from '~/util/assets';
 import { COLLIDER_TAG } from '~/util/constants';
 
 export class Gun extends BaseEntity {
@@ -15,9 +14,7 @@ export class Gun extends BaseEntity {
 		boxSprite.centerOO();
 		this.graphic = boxSprite;
 
-		const asset = assetManager.sprites.get(gunData.imageSrc);
-		if (!asset) throw new Error(`${gunData.imageSrc} not a valid sprite`);
-		const sprite = new Sprite(asset);
+		const sprite = new Sprite(gunData.image);
 		sprite.centerOO();
 		this.addGraphic(sprite);
 

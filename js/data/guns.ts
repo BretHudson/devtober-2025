@@ -1,3 +1,4 @@
+import { ImageAsset } from 'canvas-lord/core/asset-manager';
 import { Vec2 } from 'canvas-lord/math';
 import { radToDeg } from 'canvas-lord/math/misc';
 import type { Camera } from 'canvas-lord/util/camera';
@@ -5,49 +6,63 @@ import type { Ctx } from 'canvas-lord/util/canvas';
 import { Draw } from 'canvas-lord/util/draw';
 import { CSSColor } from 'canvas-lord/util/types';
 import type { Actor } from '~/entities/actor';
-import { assetManager, ASSETS } from '~/util/assets';
+import { ASSETS } from '~/util/assets';
 import { ProjectileType } from './projectiles';
 
 export interface GunData {
 	imageSrc: string;
+	image: ImageAsset;
 	color: CSSColor;
 	projectile: ProjectileType;
 	cooldown: number;
 }
 
-export const revolver: GunData = {
+const nullImage = null as unknown as ImageAsset;
+
+const revolver: GunData = {
 	imageSrc: ASSETS.GFX.REVOLVER,
+	image: nullImage,
 	color: 'pink',
 	projectile: 'revolver',
 	cooldown: 20,
 };
 
-export const machineGun: GunData = {
+const machineGun: GunData = {
 	imageSrc: ASSETS.GFX.MACHINE_GUN,
+	image: nullImage,
 	color: 'yellow',
 	projectile: 'machine-gun',
 	cooldown: 6,
 };
 
-export const rifle: GunData = {
+const rifle: GunData = {
 	imageSrc: ASSETS.GFX.SHOTGUN,
+	image: nullImage,
 	color: 'silver',
 	projectile: 'rifle',
 	cooldown: 30,
 };
 
-export const enemyGun: GunData = {
+const enemyGun: GunData = {
 	imageSrc: ASSETS.GFX.ENEMY_GUN,
+	image: nullImage,
 	color: 'blue',
 	projectile: 'basic',
 	cooldown: 30,
 };
 
+export const allGunData = {
+	revolver,
+	machineGun,
+	rifle,
+	enemyGun,
+} as const;
+
 export const renderGun = (ctx: Ctx, camera: Camera, owner: Actor) => {
 	const { gun, aim } = owner;
-	// TODO(bret): fix this
-	const asset = assetManager.sprites.get(gun.imageSrc);
-	if (!asset || !asset.image) throw new Error('');
+
+	const asset = gun.image;
+	if (!asset.image) throw new Error();
 
 	const drawPos = new Vec2(owner.x, owner.y).sub(camera);
 

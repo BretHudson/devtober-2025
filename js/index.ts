@@ -4,7 +4,7 @@ import { Player } from '~/entities/player';
 import { Enemy } from '~/entities/enemy';
 import { Gun } from './entities/gun';
 import { positionItemInRow } from './util/math';
-import { enemyGun, machineGun, revolver, rifle } from './data/guns';
+import { allGunData } from './data/guns';
 import { assetManager, ASSETS } from './util/assets';
 import { GameScene } from './scenes/game-scene';
 import { Powerup } from './entities/powerup';
@@ -17,6 +17,13 @@ Object.values(ASSETS.GFX).forEach((asset) => {
 
 let game;
 assetManager.onLoad.add(() => {
+	// init guns
+	Object.values(allGunData).forEach((gun) => {
+		const image = assetManager.sprites.get(gun.imageSrc);
+		if (!image) throw new Error();
+		gun.image = image;
+	});
+
 	game = new Game('game', {
 		fps: 60,
 		backgroundColor: '#323232',
@@ -26,6 +33,8 @@ assetManager.onLoad.add(() => {
 	const fourth = new Vec2(game.width, game.height).invScale(4);
 
 	const scene = new GameScene();
+
+	const { enemyGun, machineGun, revolver, rifle } = allGunData;
 
 	scene.player = new Player(0, 0, revolver);
 	scene.addEntity(scene.player);
