@@ -45,7 +45,18 @@ export const allGunData = {
 		cooldown: 20,
 		spreadAngle: 4,
 	} as GunData,
+	rock: {
+		...defaults,
+		name: 'Rock',
+		imageSrc: ASSETS.GFX.ROCK,
+		audioSrc: ASSETS.SFX.THROW_ROCK,
+		color: 'brown',
+		cooldown: 60,
+		spreadAngle: 0,
+		projectile: 'rock',
+	} as GunData,
 	machineGun: {
+		//
 		...defaults,
 		name: 'Machine Gun',
 		imageSrc: ASSETS.GFX.MACHINE_GUN,

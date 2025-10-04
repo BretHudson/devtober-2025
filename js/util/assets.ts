@@ -18,6 +18,7 @@ const GFX = {
 	ROCK: 'gfx/rock.png',
 } as const;
 
+//
 const SFX = {
 	HIT_1: 'sfx/hit-1.wav',
 	HIT_2: 'sfx/hit-2.wav',
@@ -27,6 +28,7 @@ const SFX = {
 	SHOTGUN_1: 'sfx/shotgun-1.wav',
 	POWERUP: 'sfx/powerup.wav',
 	PICK_UP_WEAPON: 'sfx/pick-up-weapon.wav',
+	THROW_ROCK: 'sfx/throw-rock.wav',
 } as const;
 
 export const ASSETS = {

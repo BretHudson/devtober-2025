@@ -59,11 +59,11 @@ export class GameScene extends Scene {
 			this.engine.height,
 		).invScale(4);
 
-		const { enemyGun, revolver } = allGunData;
+		const { enemyGun, rock } = allGunData;
 
 		this.addEntity(new HUD());
 
-		this.player = new Player(0, 0, revolver);
+		this.player = new Player(0, 0, rock);
 		this.addEntity(this.player);
 		this.follow(this.player);
 

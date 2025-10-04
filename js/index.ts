@@ -1,10 +1,9 @@
 import { Game } from 'canvas-lord/core/engine';
-import { Scene } from 'canvas-lord/core/scene';
 import { allGunData } from './data/guns';
 import { GameScene } from './scenes/game-scene';
 import { assetManager, ASSETS } from './util/assets';
 import { FONTS } from './util/constants';
-import { renderPattern } from './util/background-pattern';
+import { ProjectileFlyweight, projectiles } from './data/projectiles';
 
 // load assets
 Object.values(ASSETS.GFX).forEach((asset) => {
@@ -38,6 +37,23 @@ assetManager.onLoad.add(() => {
 			const error = e as Error;
 			const fileName = error.message;
 			error.message = `[Gun] Cannot find "${fileName}" ("${gun.name}")`;
+
+			throw error;
+		}
+	});
+
+	// init projectiles
+	[...projectiles.values()].forEach((projectile) => {
+		try {
+			if (projectile.imageSrc === '') return;
+
+			const image = assetManager.sprites.get(projectile.imageSrc);
+			if (!image) throw new Error(projectile.imageSrc);
+			projectile.image = image;
+		} catch (e) {
+			const error = e as Error;
+			const fileName = error.message;
+			error.message = `[Projectile] Cannot find "${fileName}"`;
 
 			throw error;
 		}

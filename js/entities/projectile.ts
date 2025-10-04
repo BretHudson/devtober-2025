@@ -1,4 +1,4 @@
-import { BoxCollider } from 'canvas-lord/collider';
+import { CircleCollider } from 'canvas-lord/collider';
 import { Sprite } from 'canvas-lord/graphic';
 import type { Vec2 } from 'canvas-lord/math';
 import {
@@ -18,6 +18,12 @@ export class Projectile extends BaseEntity {
 	owner: Actor;
 	type: ProjectileFlyweight;
 
+	imageAngle = 0;
+
+	get sprite() {
+		return this.graphic as Sprite;
+	}
+
 	constructor(owner: Actor, dir: Vec2, typeName: ProjectileType) {
 		super(owner.x, owner.y);
 
@@ -27,13 +33,18 @@ export class Projectile extends BaseEntity {
 		this.type = type;
 
 		// timer logic
-		this.timer = new Timer(60);
+		this.timer = new Timer(60 * type.duration);
 		this.timer.onFinish.add(() => {
 			this.removeSelf();
 		});
 		this.onPostUpdate.add(() => this.timer.tick());
 
-		const sprite = Sprite.createRect(8, 8, type.color);
+		let sprite: Sprite;
+		if (type.image) {
+			sprite = new Sprite(type.image);
+		} else {
+			sprite = Sprite.createCircle(type.size, type.color);
+		}
 		sprite.centerOO();
 		this.graphic = sprite;
 
@@ -43,13 +54,13 @@ export class Projectile extends BaseEntity {
 		this.dir.normalize();
 		this.speed = type.speed;
 
-		const collider = new BoxCollider(8, 8);
+		const collider = new CircleCollider(type.size / 2);
 		// TODO(bret): this is hacky af
 		collider.tag =
 			owner.collider?.tag === COLLIDER_TAG.ENEMY
 				? COLLIDER_TAG.ENEMY_PROJECTILE
 				: COLLIDER_TAG.PROJECTILE;
-		collider.centerOO();
+		// collider.centerOO();
 		this.collider = collider;
 
 		this.colliderVisible = true;
@@ -60,6 +71,11 @@ export class Projectile extends BaseEntity {
 		this.y += this.dir.y * this.speed;
 
 		if (this.collide(this.x, this.y, COLLIDER_TAG.WALL)) this.hitWall();
+
+		this.imageAngle += this.type.rotate;
+		let segments = 10;
+		let span = 360 / segments;
+		this.sprite.angle = Math.floor(this.imageAngle / span) * span;
 	}
 
 	hitActor(): void {
