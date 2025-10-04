@@ -12,6 +12,7 @@ import type { Gun } from '~/entities/gun';
 import { Projectile } from '~/entities/projectile';
 import { COLLIDER_TAG, DEPTH } from '~/util/constants';
 import { POWERUP, Powerup } from './powerup';
+import { Timer } from '~/util/timer';
 
 function getAxis(input: Input, neg: Key[], pos: Key[]) {
 	return +input.keyCheck(pos) - +input.keyCheck(neg);
@@ -24,7 +25,7 @@ const downKeys: Key[] = ['ArrowDown', 'KeyS'];
 
 export class Player extends BaseEntity {
 	aim = Vec2.one;
-	cooldown = 0;
+	cooldown = new Timer();
 	gun: GunData;
 
 	constructor(x: number, y: number) {
@@ -54,7 +55,7 @@ export class Player extends BaseEntity {
 	}
 
 	preUpdate(): void {
-		this.cooldown--;
+		this.cooldown.tick();
 	}
 
 	update(input: Input): void {
@@ -76,7 +77,7 @@ export class Player extends BaseEntity {
 		const gun = this.collideEntity<Gun>(this.x, this.y, COLLIDER_TAG.GUN);
 		if (gun && input.keyPressed('KeyE')) {
 			this.gun = gun.gunData;
-			this.cooldown = 0;
+			this.cooldown.earlyFinish();
 		}
 
 		const powerup = this.collideEntity<Powerup>(
@@ -120,13 +121,13 @@ export class Player extends BaseEntity {
 	}
 
 	shoot(target: Vec2) {
-		if (this.cooldown > 0) return;
+		if (this.cooldown.running) return;
 
 		this.scene.addEntity(
 			new Projectile(this, target.sub(this.pos), this.gun.projectile),
 		);
 
-		this.cooldown = this.gun.cooldown;
+		this.cooldown.reset(this.gun.cooldown);
 	}
 
 	render(ctx: Ctx, camera: Camera): void {

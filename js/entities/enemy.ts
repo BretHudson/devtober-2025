@@ -9,12 +9,13 @@ import { enemyGun, GunData, renderGun } from '~/data/guns';
 import { BaseEntity } from '~/entities/base-entity';
 import { Projectile } from '~/entities/projectile';
 import { COLLIDER_TAG } from '~/util/constants';
+import { Timer } from '~/util/timer';
 
 const viewRadius = 100;
 
 export class Enemy extends BaseEntity {
 	aim = Vec2.one;
-	cooldown = 0;
+	cooldown = new Timer();
 	gun: GunData;
 
 	constructor(x: number, y: number) {
@@ -36,7 +37,7 @@ export class Enemy extends BaseEntity {
 	}
 
 	preUpdate(): void {
-		this.cooldown--;
+		this.cooldown.tick();
 	}
 
 	update(): void {
@@ -60,11 +61,11 @@ export class Enemy extends BaseEntity {
 		const toPlayer = this.deltaToPlayer();
 		if (this.player && toPlayer && toPlayer.magnitude < viewRadius) {
 			this.aim = this.player.pos;
-			if (this.cooldown > 0) return;
+			if (this.cooldown.running) return;
 
 			this.shoot(toPlayer);
 
-			this.cooldown = 30;
+			this.cooldown.reset(30);
 		}
 	}
 
