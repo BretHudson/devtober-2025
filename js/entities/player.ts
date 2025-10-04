@@ -12,9 +12,11 @@ import { GunData } from '~/data/guns';
 import { Actor } from '~/entities/actor';
 import type { Gun } from '~/entities/gun';
 import { POWERUP, Powerup, PowerupData } from '~/entities/powerup';
+import { GunGraphic } from '~/graphic/GunGraphic';
 import { assetManager, ASSETS } from '~/util/assets';
 import { COLLIDER_TAG, DEPTH } from '~/util/constants';
 import { Timer } from '~/util/timer';
+import { DamageInfo } from '~/util/types';
 
 function getAxis(input: Input, neg: Key[], pos: Key[]) {
 	return +input.keyCheck(pos) - +input.keyCheck(neg);
@@ -35,6 +37,7 @@ export class Player extends Actor {
 	timers: Timer[] = [];
 
 	speedUp = false;
+	invincible = false;
 
 	get collider(): BoxCollider {
 		return super.collider as BoxCollider;
@@ -53,7 +56,7 @@ export class Player extends Actor {
 		sprite.centerOO();
 		this.graphic = sprite;
 
-		const collider = new BoxCollider(32, 32);
+		const collider = new BoxCollider(18, 32);
 		collider.tag = COLLIDER_TAG.PLAYER;
 		collider.centerOO();
 		this.collider = collider;
@@ -61,9 +64,13 @@ export class Player extends Actor {
 
 		this.addComponent(healthComponent);
 
+		this.addGraphic(new GunGraphic(gun));
+
 		this.depth = DEPTH.PLAYER;
 
 		this.renderHealth = false;
+
+		this.onPreUpdate.add(this.updateTimers.bind(this));
 	}
 
 	addTimer(timer: Timer) {
@@ -71,17 +78,15 @@ export class Player extends Actor {
 		timer.onFinish.add(() => this.removeTimer(timer));
 	}
 
+	updateTimers(): void {
+		this.timers.forEach((timer) => timer.tick());
+	}
+
 	removeTimer(timer: Timer) {
 		const index = this.timers.indexOf(timer);
 		if (index < 0) return;
 
 		this.timers.splice(index, 1);
-	}
-
-	preUpdate(): void {
-		super.preUpdate();
-
-		this.timers.forEach((timer) => timer.tick());
 	}
 
 	update(input: Input): void {
@@ -116,10 +121,10 @@ export class Player extends Actor {
 			);
 		}
 
-		this.aim = this.scene.mouse;
+		this.aimDir = this.scene.mouse.sub(this.pos);
 
 		if (input.mouseCheck()) {
-			this.shoot(this.aim.sub(this.pos));
+			this.shoot(this.aimDir);
 		}
 
 		const gun = this.collideEntity<Gun>(this.x, this.y, COLLIDER_TAG.GUN);
@@ -141,6 +146,24 @@ export class Player extends Actor {
 		super.update();
 	}
 
+	postUpdate(): void {
+		this.sprite.color = undefined;
+		const status = this.getStatus(POWERUP.INVINCIBILITY);
+		if (status) {
+			// TODO(bret): gonna want to adjust this to use actual framedate rather than percentages (as durations can change)
+			const { percentLeft } = status.timer;
+			const closeToOut = percentLeft < 0.3;
+			const flash = (percentLeft * 20) % 2 < 1;
+
+			this.sprite.color = closeToOut && flash ? 'pink' : 'deeppink';
+		}
+	}
+
+	takeDamage(damageInfo: DamageInfo): void {
+		if (this.invincible) return;
+		super.takeDamage(damageInfo);
+	}
+
 	die(): void {
 		this.scene.removePlayer();
 	}
@@ -150,9 +173,7 @@ export class Player extends Actor {
 
 		// check if we already have one of that type
 		if (!powerup.stacks) {
-			const existingStatus = this.statuses.find(
-				(status) => status.powerup === powerup,
-			);
+			const existingStatus = this.getStatus(powerup);
 			if (existingStatus) {
 				existingStatus.timer.restart();
 				return;
@@ -169,6 +190,14 @@ export class Player extends Actor {
 		this.addTimer(timer);
 
 		this.statuses.push(status);
+	}
+
+	getStatus(statusType: PowerupData) {
+		return this.statuses.find((status) => status.powerup === statusType);
+	}
+
+	hasStatus(statusType: PowerupData) {
+		return this.statuses.find((status) => status.powerup === statusType);
 	}
 
 	removeStatus(status: StatusEffect) {
@@ -193,9 +222,15 @@ export class Player extends Actor {
 				}
 				break;
 			case POWERUP.SPEED_UP: {
-				this.speedUp = true;
 				consumed = true;
+				this.speedUp = true;
 				callback = () => (this.speedUp = false);
+				break;
+			}
+			case POWERUP.INVINCIBILITY: {
+				consumed = true;
+				this.invincible = true;
+				callback = () => (this.invincible = false);
 				break;
 			}
 			default:
@@ -212,6 +247,8 @@ export class Player extends Actor {
 	render(ctx: Ctx, camera: Camera): void {
 		super.render(ctx, camera);
 
+		const aimAt = this.aimDir.add(this.pos);
+
 		const r = 20;
 		Draw.circle(
 			ctx,
@@ -221,8 +258,8 @@ export class Player extends Actor {
 				originX: r,
 				originY: r,
 			},
-			this.aim.x - camera.x,
-			this.aim.y - camera.y,
+			aimAt.x - camera.x,
+			aimAt.y - camera.y,
 			r,
 		);
 	}

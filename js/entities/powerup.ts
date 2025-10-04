@@ -21,17 +21,23 @@ export type PowerupData = {
 
 export const POWERUP = {
 	HEAL: {
-		//
 		name: 'Heal',
 		color: 'red',
 		type: 'one-time',
 	} as PowerupData,
 	SPEED_UP: {
-		//
 		name: 'Speed Up',
 		color: '#77f',
 		type: 'status',
-		duration: 5, // seconds
+		duration: 5,
+		stacks: false,
+	} as PowerupData,
+	INVINCIBILITY: {
+		name: 'Invincibility',
+		// color: '#d7c823',
+		color: 'deeppink',
+		type: 'status',
+		duration: 5,
 		stacks: false,
 	} as PowerupData,
 } as const;

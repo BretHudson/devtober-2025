@@ -6,7 +6,7 @@ import { degToRad } from 'canvas-lord/math/misc';
 import type { Camera } from 'canvas-lord/util/camera';
 import type { Ctx } from 'canvas-lord/util/canvas';
 import { healthComponent, renderHealth } from '~/components/health';
-import { GunData, renderGun } from '~/data/guns';
+import { GunData } from '~/data/guns';
 import { BaseEntity } from '~/entities/base-entity';
 import { Projectile } from '~/entities/projectile';
 import { assetManager, ASSETS } from '~/util/assets';
@@ -18,7 +18,7 @@ import type { DamageInfo } from '~/util/types';
 type HurtBy = string;
 
 export class Actor extends BaseEntity {
-	aim = Vec2.one;
+	aimDir = Vec2.right;
 	cooldown = new Timer();
 	gun: GunData;
 	hurtBy: HurtBy;
@@ -118,6 +118,5 @@ export class Actor extends BaseEntity {
 
 	render(ctx: Ctx, camera: Camera): void {
 		if (this.renderHealth) renderHealth(ctx, camera, this);
-		renderGun(ctx, camera, this);
 	}
 }

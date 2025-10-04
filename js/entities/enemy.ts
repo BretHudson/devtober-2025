@@ -9,6 +9,7 @@ import { healthComponent } from '~/components/health';
 import { GunData } from '~/data/guns';
 import { Actor } from '~/entities/actor';
 import { Powerup, POWERUP } from '~/entities/powerup';
+import { GunGraphic } from '~/graphic/GunGraphic';
 import { assetManager, ASSETS } from '~/util/assets';
 import { COLLIDER_TAG } from '~/util/constants';
 import { SEEDS } from '~/util/random';
@@ -34,13 +35,15 @@ export class Enemy extends Actor {
 		this.colliderVisible = true;
 
 		this.addComponent(healthComponent);
+
+		this.addGraphic(new GunGraphic(gun));
 	}
 
 	update(): void {
 		const toPlayer = this.deltaToPlayer();
 		const canSeePlayer = toPlayer.magnitude < viewRadius;
 		if (this.player.alive && canSeePlayer) {
-			this.aim = this.player.pos;
+			this.aimDir = toPlayer;
 			this.shoot(toPlayer);
 		}
 

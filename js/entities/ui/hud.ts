@@ -91,6 +91,7 @@ export class HUD extends BaseEntity {
 				return;
 			}
 			sprite.visible = bg.visible = true;
+			sprite.color = status.powerup.color as string;
 
 			sprite.scaleX = status.timer.percentLeft;
 		});

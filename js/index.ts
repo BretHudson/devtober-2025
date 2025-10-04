@@ -26,6 +26,7 @@ assetManager.onLoad.add(() => {
 	Object.values(allGunData).forEach((gun) => {
 		try {
 			const image = assetManager.sprites.get(gun.imageSrc);
+			console.log(image);
 			if (!image) throw new Error(gun.imageSrc);
 			gun.image = image;
 
@@ -46,7 +47,7 @@ assetManager.onLoad.add(() => {
 		backgroundColor: '#323232',
 		assetManager,
 		gameLoopSettings: {
-			updateMode: 'always',
+			updateMode: 'focus',
 			renderMode: 'onUpdate',
 		},
 	});

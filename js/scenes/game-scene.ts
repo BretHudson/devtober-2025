@@ -67,8 +67,8 @@ export class GameScene extends Scene {
 		this.addEntity(this.player);
 		this.follow(this.player);
 
-		this.addEntity(new Powerup(POWERUP.SPEED_UP, 0, 0));
-		this.addEntity(new Powerup(POWERUP.SPEED_UP, 0, -quarterSize.y * 1.2));
+		this.addEntity(new Powerup(POWERUP.INVINCIBILITY, 0, quarterSize.y));
+		this.addEntity(new Powerup(POWERUP.SPEED_UP, 0, -quarterSize.y));
 
 		this.addEntity(new Enemy(quarterSize.x, quarterSize.y, enemyGun));
 		this.addEntity(new Enemy(quarterSize.x, -quarterSize.y, enemyGun));
@@ -127,7 +127,7 @@ export class GameScene extends Scene {
 		let offset = Vec2.zero;
 		// TODO(bret): this is so hacked together lmao
 		if (cameraTarget === this.player) {
-			offset = this.player.aim.sub(this.player.pos).scale(0.1);
+			offset = this.player.aimDir.scale(0.1);
 			offset.y *= 16 / 9;
 		}
 
