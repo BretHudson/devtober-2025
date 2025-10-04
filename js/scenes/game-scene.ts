@@ -67,6 +67,7 @@ export class GameScene extends Scene {
 		this.addEntity(this.player);
 		this.follow(this.player);
 
+		this.addEntity(new Powerup(POWERUP.SPEED_UP, 0, 0));
 		this.addEntity(new Powerup(POWERUP.SPEED_UP, 0, -quarterSize.y * 1.2));
 
 		this.addEntity(new Enemy(quarterSize.x, quarterSize.y, enemyGun));
@@ -74,9 +75,10 @@ export class GameScene extends Scene {
 		this.addEntity(new Enemy(-quarterSize.x, -quarterSize.y, enemyGun));
 		this.addEntity(new Enemy(-quarterSize.x, quarterSize.y, enemyGun));
 
-		[revolver, machineGun, rifle].forEach((g, i) => {
-			const x = positionItemInRow(i, 3, 16, 48);
-			this.addEntity(new Gun(g, x, quarterSize.y * 1.3));
+		Object.values(allGunData).forEach((g, i, arr) => {
+			const x = positionItemInRow(i, arr.length, 16, 48);
+			const y = quarterSize.y * 2 + (i % 2 ? 64 : 0);
+			this.addEntity(new Gun(g, x, y));
 		});
 
 		this.onRender.add(renderPattern(this));

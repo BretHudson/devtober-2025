@@ -64,10 +64,19 @@ export const allGunData = {
 	rifle: {
 		...defaults,
 		name: 'Rifle',
-		imageSrc: ASSETS.GFX.SHOTGUN,
+		imageSrc: ASSETS.GFX.RIFLE,
 		audioSrc: ASSETS.SFX.SHOOT_3,
 		color: 'silver',
 		projectile: 'rifle',
+		cooldown: 30,
+	} as GunData,
+	shotgun: {
+		...defaults,
+		name: 'Shotgun',
+		imageSrc: ASSETS.GFX.SHOTGUN,
+		audioSrc: ASSETS.SFX.SHOTGUN_1,
+		color: 'lime',
+		projectile: 'machine-gun',
 		cooldown: 30,
 	} as GunData,
 	enemyGun: {
