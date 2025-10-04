@@ -41,14 +41,13 @@ assetManager.onLoad.add(() => {
 
 	const scene = new GameScene();
 
-	// scene.player = new Player(center.x, center.y);
-	scene.player = new Player(center.x + 100, center.y + 100);
+	scene.player = new Player(center.x, center.y);
 	scene.addEntity(scene.player);
 	scene.follow(scene.player);
 
 	scene.addEntity(new Enemy(center.x - fourth.x, center.y - fourth.y));
 	scene.addEntity(new Enemy(center.x - fourth.x, center.y + fourth.y));
-	// scene.addEntity(new Enemy(center.x + fourth.x, center.y + fourth.y));
+	scene.addEntity(new Enemy(center.x + fourth.x, center.y + fourth.y));
 	scene.addEntity(new Enemy(center.x + fourth.x, center.y - fourth.y));
 
 	[revolver, machineGun, rifle].forEach((g, i) => {

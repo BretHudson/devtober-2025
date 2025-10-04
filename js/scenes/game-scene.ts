@@ -6,7 +6,19 @@ export class GameScene extends Scene {
 	player: Player | null = null;
 	cameraTarget: Entity | null = null;
 
+	constructor() {
+		super();
+
+		this.bounds = [-200, -200, 1000, 1000];
+	}
+
 	postUpdate(): void {
+		this.updateCamera();
+	}
+
+	updateCamera() {
+		let newX = this.camera.x;
+		let newY = this.camera.y;
 		if (this.cameraTarget) {
 			let target = this.cameraTarget.pos;
 
@@ -17,9 +29,17 @@ export class GameScene extends Scene {
 				);
 			}
 
-			this.camera.x = target.x - this.engine.halfWidth;
-			this.camera.y = target.y - this.engine.halfHeight;
+			newX = target.x - this.engine.halfWidth;
+			newY = target.y - this.engine.halfHeight;
 		}
+
+		if (this.bounds) {
+			newX = Math.clamp(newX, this.bounds[0], this.bounds[2]);
+			newY = Math.clamp(newY, this.bounds[1], this.bounds[3]);
+		}
+
+		this.camera.x = newX;
+		this.camera.y = newY;
 	}
 
 	removePlayer() {
