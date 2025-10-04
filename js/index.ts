@@ -3,6 +3,9 @@ import { Scene } from 'canvas-lord/core/scene';
 import { Vec2 } from 'canvas-lord/math';
 import { Player } from '~/entities/player';
 import { Enemy } from '~/entities/enemy';
+import { Gun } from './entities/gun';
+import { positionItemInRow } from './util/math';
+import { machineGun, revolver, rifle } from './data/guns';
 
 const game = new Game('game', {
 	fps: 60,
@@ -52,6 +55,11 @@ scene.addEntity(new Enemy(center.x - fourth.x, center.y - fourth.y));
 scene.addEntity(new Enemy(center.x - fourth.x, center.y + fourth.y));
 scene.addEntity(new Enemy(center.x + fourth.x, center.y + fourth.y));
 scene.addEntity(new Enemy(center.x + fourth.x, center.y - fourth.y));
+
+[revolver, machineGun, rifle].forEach((g, i) => {
+	const x = positionItemInRow(i, 3, 16, 48);
+	scene.addEntity(new Gun(center.x + x, center.y + fourth.y * 1.3, g));
+});
 
 const pattern = createPattern();
 scene.onRender.add((ctx) => {

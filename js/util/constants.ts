@@ -3,6 +3,8 @@ export const COLLIDER_TAG = {
 	ENEMY: 'enemy',
 	PROJECTILE: 'projectile',
 	ENEMY_PROJECTILE: 'enemy_projectile',
+
+	GUN: 'gun',
 };
 
 import type { Enemy } from '~/entities/enemy';

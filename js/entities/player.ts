@@ -5,8 +5,9 @@ import { Vec2 } from 'canvas-lord/math';
 import type { Ctx } from 'canvas-lord/util/canvas';
 import { Draw } from 'canvas-lord/util/draw';
 import { healthComponent, renderHealth } from '~/components/health';
-import { GunData, playerGun, renderGun } from '~/data/guns';
+import { GunData, revolver, renderGun } from '~/data/guns';
 import { BaseEntity } from '~/entities/base-entity';
+import type { Gun } from '~/entities/gun';
 import { Projectile } from '~/entities/projectile';
 import { COLLIDER_TAG } from '~/util/constants';
 
@@ -39,7 +40,7 @@ export class Player extends BaseEntity {
 
 		this.addComponent(healthComponent);
 
-		this.gun = playerGun;
+		this.gun = revolver;
 	}
 
 	preUpdate(): void {
@@ -62,12 +63,16 @@ export class Player extends BaseEntity {
 			this.shoot(this.aim);
 		}
 
+		const gun = this.collideEntity<Gun>(this.x, this.y, COLLIDER_TAG.GUN);
+		if (gun && input.keyPressed('KeyE')) {
+			this.gun = gun.gunData;
+		}
+
 		const bullet = this.collideEntity<Projectile>(
 			this.x,
 			this.y,
 			COLLIDER_TAG.ENEMY_PROJECTILE,
 		);
-
 		if (bullet) {
 			bullet.removeSelf();
 

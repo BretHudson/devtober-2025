@@ -9,8 +9,18 @@ export interface GunData {
 	projectile: ProjectileType;
 }
 
-export const playerGun: GunData = {
+export const revolver: GunData = {
 	color: 'pink',
+	projectile: 'superb',
+};
+
+export const machineGun: GunData = {
+	color: 'yellow',
+	projectile: 'superb',
+};
+
+export const rifle: GunData = {
+	color: 'silver',
 	projectile: 'superb',
 };
 
@@ -21,8 +31,8 @@ export const enemyGun: GunData = {
 
 export const renderGun = (ctx: Ctx, owner: Owner) => {
 	const { gun, aim } = owner;
-	const w = 6;
-	const h = 6;
+	const w = 16;
+	const h = 8;
 
 	let offset = aim.sub(owner.pos);
 	offset.normalize();
