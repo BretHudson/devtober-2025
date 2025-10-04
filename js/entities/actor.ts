@@ -1,4 +1,5 @@
 import { BoxCollider } from 'canvas-lord/collider';
+import { Input } from 'canvas-lord/core/input';
 import { Sprite } from 'canvas-lord/graphic';
 import { Vec2 } from 'canvas-lord/math';
 import type { Camera } from 'canvas-lord/util/camera';
@@ -43,7 +44,7 @@ export class Actor extends BaseEntity {
 		this.cooldown.tick();
 	}
 
-	update() {
+	update(_input?: Input) {
 		const { x, y } = this;
 
 		const bullet = this.collideEntity<Projectile>(x, y, this.hurtBy);
