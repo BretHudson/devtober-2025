@@ -120,6 +120,7 @@ export class GameScene extends Scene {
 
 		this.player.removeSelf();
 		this.player = null;
+		this.cameraTarget = null;
 	}
 
 	follow(entity: Entity) {
