@@ -24,9 +24,9 @@ export class GameScene extends Scene {
 
 			// TODO(bret): this is so hacked together lmao
 			if (this.cameraTarget && this.cameraTarget === this.player) {
-				target = target.add(
-					this.player.aim.sub(this.player.pos).scale(0.1),
-				);
+				const offset = this.player.aim.sub(this.player.pos).scale(0.1);
+				offset.y *= 16 / 9;
+				target = target.add(offset);
 			}
 
 			newX = target.x - this.engine.halfWidth;
