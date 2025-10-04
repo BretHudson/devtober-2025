@@ -3,6 +3,7 @@ import { Sprite } from 'canvas-lord/graphic';
 import { GunData } from '~/data/guns';
 import { BaseEntity } from '~/entities/base-entity';
 import { COLLIDER_TAG } from '~/util/constants';
+import { createTitle } from '~/util/ui';
 
 export class Gun extends BaseEntity {
 	gunData: GunData;
@@ -17,6 +18,8 @@ export class Gun extends BaseEntity {
 		const sprite = new Sprite(gunData.image);
 		sprite.centerOO();
 		this.addGraphic(sprite);
+
+		this.addGraphic(createTitle(gunData.name));
 
 		const collider = new CircleCollider(16);
 		collider.tag = COLLIDER_TAG.GUN;
