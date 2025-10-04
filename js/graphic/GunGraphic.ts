@@ -12,13 +12,10 @@ export class GunGraphic extends Sprite {
 		super(gun.image, x, y);
 
 		this.gun = gun;
-
-		this.centerOO();
-		this.originX = 0;
 	}
 
 	render(ctx: Ctx, camera?: Camera): void {
-		super.render(ctx, camera);
+		this.originY = this.height / 2;
 
 		const parent = this.parent as unknown as Actor;
 		let offset = parent.aimDir.clone();
@@ -32,5 +29,7 @@ export class GunGraphic extends Sprite {
 
 		this.scaleX = offset.x < 0 ? -1 : 1;
 		if (this.scaleX < 0) this.angle = 180 - this.angle;
+
+		super.render(ctx, camera);
 	}
 }

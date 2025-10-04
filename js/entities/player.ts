@@ -39,6 +39,8 @@ export class Player extends Actor {
 	speedUp = false;
 	invincible = false;
 
+	gunGfx: GunGraphic;
+
 	get collider(): BoxCollider {
 		return super.collider as BoxCollider;
 	}
@@ -65,7 +67,8 @@ export class Player extends Actor {
 
 		this.addComponent(healthComponent);
 
-		this.addGraphic(new GunGraphic(gun));
+		this.gunGfx = new GunGraphic(gun);
+		this.addGraphic(this.gunGfx);
 
 		this.depth = DEPTH.PLAYER;
 
@@ -140,6 +143,7 @@ export class Player extends Actor {
 			if (!asset) throw new Error();
 			Sfx.play(asset, 0.5, 0.2);
 			this.gun = gun.gunData;
+			this.gunGfx.asset = this.gun.image;
 			this.cooldown.earlyFinish();
 		}
 
