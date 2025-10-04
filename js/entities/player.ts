@@ -10,7 +10,8 @@ import { GunData, renderGun, revolver } from '~/data/guns';
 import { BaseEntity } from '~/entities/base-entity';
 import type { Gun } from '~/entities/gun';
 import { Projectile } from '~/entities/projectile';
-import { COLLIDER_TAG } from '~/util/constants';
+import { COLLIDER_TAG, DEPTH } from '~/util/constants';
+import { POWERUP, Powerup } from './powerup';
 
 function getAxis(input: Input, neg: Key[], pos: Key[]) {
 	return +input.keyCheck(pos) - +input.keyCheck(neg);
@@ -42,6 +43,14 @@ export class Player extends BaseEntity {
 		this.addComponent(healthComponent);
 
 		this.gun = revolver;
+
+		this.depth = DEPTH.PLAYER;
+	}
+
+	get health() {
+		const health = this.component(healthComponent);
+		if (!health) throw new Error('does not have health');
+		return health;
 	}
 
 	preUpdate(): void {
@@ -70,6 +79,13 @@ export class Player extends BaseEntity {
 			this.cooldown = 0;
 		}
 
+		const powerup = this.collideEntity<Powerup>(
+			this.x,
+			this.y,
+			COLLIDER_TAG.POWERUP,
+		);
+		if (powerup) this.processPowerup(powerup);
+
 		const bullet = this.collideEntity<Projectile>(
 			this.x,
 			this.y,
@@ -77,14 +93,30 @@ export class Player extends BaseEntity {
 		);
 		if (bullet) {
 			bullet.removeSelf();
-
-			const health = this.component(healthComponent)!;
-			health.cur -= bullet.type.damage;
-			if (health.cur <= 0) {
+			this.health.cur -= bullet.type.damage;
+			if (this.health.cur <= 0) {
 				this.scene.removePlayer();
 				return;
 			}
 		}
+	}
+
+	processPowerup(powerup: Powerup) {
+		const { health } = this;
+
+		let consumed = false;
+		switch (powerup.type) {
+			case POWERUP.HEAL:
+				if (health.cur < health.max) {
+					consumed = true;
+					++health.cur;
+				}
+				break;
+			default:
+				throw new Error(`unsupported powerup "${powerup.type}"`);
+		}
+
+		if (consumed) powerup.removeSelf();
 	}
 
 	shoot(target: Vec2) {

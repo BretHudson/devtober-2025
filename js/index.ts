@@ -7,6 +7,7 @@ import { positionItemInRow } from './util/math';
 import { machineGun, revolver, rifle } from './data/guns';
 import { assetManager, ASSETS } from './util/assets';
 import { GameScene } from './scenes/game-scene';
+import { Powerup } from './entities/powerup';
 
 // load assets
 Object.values(ASSETS.GFX).forEach((asset) => {
@@ -45,6 +46,8 @@ assetManager.onLoad.add(() => {
 	scene.addEntity(scene.player);
 	scene.follow(scene.player);
 
+	scene.addEntity(new Powerup('heal', center.x, center.y - fourth.y * 1.2));
+
 	scene.addEntity(new Enemy(center.x - fourth.x, center.y - fourth.y));
 	scene.addEntity(new Enemy(center.x - fourth.x, center.y + fourth.y));
 	scene.addEntity(new Enemy(center.x + fourth.x, center.y + fourth.y));
@@ -52,7 +55,7 @@ assetManager.onLoad.add(() => {
 
 	[revolver, machineGun, rifle].forEach((g, i) => {
 		const x = positionItemInRow(i, 3, 16, 48);
-		scene.addEntity(new Gun(center.x + x, center.y + fourth.y * 1.3, g));
+		scene.addEntity(new Gun(g, center.x + x, center.y + fourth.y * 1.3));
 	});
 
 	const pattern = createPattern();

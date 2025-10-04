@@ -1,3 +1,8 @@
+import type { Enemy } from '~/entities/enemy';
+import type { Player } from '~/entities/player';
+
+export type Owner = Player | Enemy;
+
 export const COLLIDER_TAG = {
 	PLAYER: 'player',
 	ENEMY: 'enemy',
@@ -5,9 +10,10 @@ export const COLLIDER_TAG = {
 	ENEMY_PROJECTILE: 'enemy_projectile',
 
 	GUN: 'gun',
+	POWERUP: 'powerup',
+} as const;
+
+export const DEPTH = {
+	DEFAULT: 0,
+	PLAYER: -1,
 };
-
-import type { Enemy } from '~/entities/enemy';
-import type { Player } from '~/entities/player';
-
-export type Owner = Player | Enemy;

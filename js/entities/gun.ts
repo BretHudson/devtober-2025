@@ -8,7 +8,7 @@ import { COLLIDER_TAG } from '~/util/constants';
 export class Gun extends BaseEntity {
 	gunData: GunData;
 
-	constructor(x: number, y: number, gunData: GunData) {
+	constructor(gunData: GunData, x: number, y: number) {
 		super(x, y);
 
 		const boxSprite = Sprite.createCircle(16 * 2, gunData.color);
@@ -27,7 +27,5 @@ export class Gun extends BaseEntity {
 		this.colliderVisible = true;
 
 		this.gunData = gunData;
-
-		this.depth = 1;
 	}
 }
