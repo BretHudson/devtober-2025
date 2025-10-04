@@ -1,6 +1,9 @@
 import { AssetManager } from 'canvas-lord/canvas-lord';
 
 const GFX = {
+	PLAYER: 'gfx/player.png',
+	ENEMY: 'gfx/enemy.png',
+
 	REVOLVER: 'gfx/revolver.png',
 	MACHINE_GUN: 'gfx/machine-gun.png',
 	SHOTGUN: 'gfx/shotgun.png',

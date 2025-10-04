@@ -12,3 +12,7 @@ export const DEPTH = {
 	DEFAULT: 0,
 	PLAYER: -1,
 };
+
+export const FONTS = {
+	SKULLBOY: 'Skullboy',
+};

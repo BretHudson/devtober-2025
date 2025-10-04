@@ -1,4 +1,5 @@
-import type { Input, Key } from 'canvas-lord';
+import type { Input, Key } from 'canvas-lord/core/input';
+import { Keys } from 'canvas-lord/core/input';
 import { BoxCollider } from 'canvas-lord/collider';
 import { Sprite } from 'canvas-lord/graphic';
 import { Vec2 } from 'canvas-lord/math';
@@ -11,6 +12,7 @@ import { Actor } from '~/entities/actor';
 import type { Gun } from '~/entities/gun';
 import { POWERUP, Powerup } from '~/entities/powerup';
 import { Projectile } from '~/entities/projectile';
+import { assetManager, ASSETS } from '~/util/assets';
 import { COLLIDER_TAG, DEPTH } from '~/util/constants';
 import { Timer } from '~/util/timer';
 
@@ -18,10 +20,10 @@ function getAxis(input: Input, neg: Key[], pos: Key[]) {
 	return +input.keyCheck(pos) - +input.keyCheck(neg);
 }
 
-const leftKeys: Key[] = ['ArrowLeft', 'KeyA'];
-const rightKeys: Key[] = ['ArrowRight', 'KeyD'];
-const upKeys: Key[] = ['ArrowUp', 'KeyW'];
-const downKeys: Key[] = ['ArrowDown', 'KeyS'];
+const leftKeys: Key[] = [Keys.ArrowLeft, Keys.A];
+const rightKeys: Key[] = [Keys.ArrowRight, Keys.D];
+const upKeys: Key[] = [Keys.ArrowUp, Keys.W];
+const downKeys: Key[] = [Keys.ArrowDown, Keys.S];
 
 export class Player extends Actor {
 	timers: Timer[] = [];
@@ -31,9 +33,11 @@ export class Player extends Actor {
 	constructor(x: number, y: number, gun: GunData) {
 		super(x, y, gun, COLLIDER_TAG.ENEMY_PROJECTILE);
 
-		const sprite = Sprite.createRect(32, 32, 'cyan');
+		const asset = assetManager.sprites.get(ASSETS.GFX.PLAYER);
+		if (!asset) throw new Error();
+		const sprite = new Sprite(asset);
 		sprite.centerOO();
-		this.graphic = sprite;
+		this.addGraphic(sprite);
 
 		const collider = new BoxCollider(32, 32);
 		collider.tag = COLLIDER_TAG.PLAYER;
@@ -89,7 +93,7 @@ export class Player extends Actor {
 		}
 
 		const gun = this.collideEntity<Gun>(this.x, this.y, COLLIDER_TAG.GUN);
-		if (gun && input.keyPressed('KeyE')) {
+		if (gun && input.keyPressed(Keys.E)) {
 			this.gun = gun.gunData;
 			this.cooldown.earlyFinish();
 		}

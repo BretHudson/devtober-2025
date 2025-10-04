@@ -7,6 +7,7 @@ import { Draw } from 'canvas-lord/util/draw';
 import { healthComponent } from '~/components/health';
 import { GunData } from '~/data/guns';
 import { Actor } from '~/entities/actor';
+import { assetManager, ASSETS } from '~/util/assets';
 import { COLLIDER_TAG } from '~/util/constants';
 
 const viewRadius = 100;
@@ -15,11 +16,13 @@ export class Enemy extends Actor {
 	constructor(x: number, y: number, gun: GunData) {
 		super(x, y, gun, COLLIDER_TAG.PROJECTILE);
 
-		const sprite = Sprite.createRect(32, 32, 'orange');
+		const asset = assetManager.sprites.get(ASSETS.GFX.ENEMY);
+		if (!asset) throw new Error();
+		const sprite = new Sprite(asset);
 		sprite.centerOO();
-		this.graphic = sprite;
+		this.addGraphic(sprite);
 
-		const collider = new BoxCollider(32, 32);
+		const collider = new BoxCollider(48, 48);
 		collider.tag = COLLIDER_TAG.ENEMY;
 		collider.centerOO();
 		this.collider = collider;

@@ -1,6 +1,4 @@
-import { BoxCollider } from 'canvas-lord/collider';
 import { Input } from 'canvas-lord/core/input';
-import { Sprite } from 'canvas-lord/graphic';
 import { Vec2 } from 'canvas-lord/math';
 import type { Camera } from 'canvas-lord/util/camera';
 import type { Ctx } from 'canvas-lord/util/canvas';
@@ -8,7 +6,6 @@ import { healthComponent, renderHealth } from '~/components/health';
 import { GunData, renderGun } from '~/data/guns';
 import { BaseEntity } from '~/entities/base-entity';
 import { Projectile } from '~/entities/projectile';
-import { COLLIDER_TAG } from '~/util/constants';
 import { Timer } from '~/util/timer';
 import type { DamageInfo } from '~/util/types';
 
@@ -22,16 +19,6 @@ export class Actor extends BaseEntity {
 
 	constructor(x: number, y: number, gun: GunData, hurtBy: HurtBy) {
 		super(x, y);
-
-		const sprite = Sprite.createRect(32, 32, 'orange');
-		sprite.centerOO();
-		this.graphic = sprite;
-
-		const collider = new BoxCollider(32, 32);
-		collider.tag = COLLIDER_TAG.ENEMY;
-		collider.centerOO();
-		this.collider = collider;
-		this.colliderVisible = true;
 
 		this.addComponent(healthComponent);
 
