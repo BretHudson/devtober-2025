@@ -22,6 +22,7 @@ export class Actor extends BaseEntity {
 	cooldown = new Timer();
 	gun: GunData;
 	hurtBy: HurtBy;
+	renderHealth = true;
 
 	hitStunTimer = new Timer(100);
 
@@ -97,7 +98,7 @@ export class Actor extends BaseEntity {
 	}
 
 	render(ctx: Ctx, camera: Camera): void {
-		renderHealth(ctx, camera, this);
+		if (this.renderHealth) renderHealth(ctx, camera, this);
 		renderGun(ctx, camera, this);
 	}
 }

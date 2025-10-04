@@ -13,6 +13,8 @@ export const COLLIDER_TAG = {
 export const DEPTH = {
 	DEFAULT: 0,
 	PLAYER: -1,
+
+	HUD: -1000,
 };
 
 export const FONTS = {

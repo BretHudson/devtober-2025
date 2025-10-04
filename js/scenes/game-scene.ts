@@ -11,6 +11,7 @@ import { Enemy } from '~/entities/enemy';
 import { Gun } from '~/entities/gun';
 import { Player } from '~/entities/player';
 import { POWERUP, Powerup } from '~/entities/powerup';
+import { HUD } from '~/entities/ui/hud';
 import { renderPattern } from '~/util/background-pattern';
 import { COLLIDER_TAG, FONTS } from '~/util/constants';
 import { positionItemInRow } from '~/util/math';
@@ -58,6 +59,8 @@ export class GameScene extends Scene {
 		).invScale(4);
 
 		const { enemyGun, machineGun, revolver, rifle } = allGunData;
+
+		this.addEntity(new HUD());
 
 		this.player = new Player(0, 0, revolver);
 		this.addEntity(this.player);

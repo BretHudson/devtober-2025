@@ -56,6 +56,8 @@ export class Player extends Actor {
 		this.addComponent(healthComponent);
 
 		this.depth = DEPTH.PLAYER;
+
+		this.renderHealth = false;
 	}
 
 	get health() {
