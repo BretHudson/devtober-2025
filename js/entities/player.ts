@@ -58,7 +58,7 @@ export class Player extends BaseEntity {
 		this.x += move.x * 3;
 		this.y += move.y * 3;
 
-		this.aim = input.mouse.pos;
+		this.aim = input.mouse.pos.add(this.scene.camera);
 
 		if (input.mouseCheck()) {
 			this.shoot(this.aim);
@@ -107,9 +107,11 @@ export class Player extends BaseEntity {
 			{
 				color: 'yellow',
 				type: 'stroke',
+				originX: r,
+				originY: r,
 			},
-			this.aim.x - r,
-			this.aim.y - r,
+			this.aim.x - camera.x,
+			this.aim.y - camera.y,
 			r,
 		);
 	}

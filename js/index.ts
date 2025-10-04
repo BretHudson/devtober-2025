@@ -48,7 +48,7 @@ assetManager.onLoad.add(() => {
 
 	scene.addEntity(new Enemy(center.x - fourth.x, center.y - fourth.y));
 	scene.addEntity(new Enemy(center.x - fourth.x, center.y + fourth.y));
-	scene.addEntity(new Enemy(center.x + fourth.x, center.y + fourth.y));
+	// scene.addEntity(new Enemy(center.x + fourth.x, center.y + fourth.y));
 	scene.addEntity(new Enemy(center.x + fourth.x, center.y - fourth.y));
 
 	[revolver, machineGun, rifle].forEach((g, i) => {
@@ -57,7 +57,11 @@ assetManager.onLoad.add(() => {
 	});
 
 	const pattern = createPattern();
+	const patternMatrix = new DOMMatrix();
 	scene.onRender.add((ctx) => {
+		pattern.setTransform(
+			patternMatrix.translate(-scene.camera.x, -scene.camera.y),
+		);
 		ctx.fillStyle = pattern;
 		ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 	});
