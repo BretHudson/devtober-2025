@@ -5,15 +5,15 @@ import type { Camera } from 'canvas-lord/util/camera';
 import type { Ctx } from 'canvas-lord/util/canvas';
 import { Draw } from 'canvas-lord/util/draw';
 import { healthComponent } from '~/components/health';
-import { enemyGun } from '~/data/guns';
+import { GunData } from '~/data/guns';
 import { Actor } from '~/entities/actor';
 import { COLLIDER_TAG } from '~/util/constants';
 
 const viewRadius = 100;
 
 export class Enemy extends Actor {
-	constructor(x: number, y: number) {
-		super(x, y, enemyGun, COLLIDER_TAG.PROJECTILE);
+	constructor(x: number, y: number, gun: GunData) {
+		super(x, y, gun, COLLIDER_TAG.PROJECTILE);
 
 		const sprite = Sprite.createRect(32, 32, 'orange');
 		sprite.centerOO();

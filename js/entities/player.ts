@@ -5,14 +5,13 @@ import { Vec2 } from 'canvas-lord/math';
 import { Camera } from 'canvas-lord/util/camera';
 import type { Ctx } from 'canvas-lord/util/canvas';
 import { Draw } from 'canvas-lord/util/draw';
-import { healthComponent, renderHealth } from '~/components/health';
-import { GunData, renderGun, revolver } from '~/data/guns';
+import { healthComponent } from '~/components/health';
+import { GunData } from '~/data/guns';
 import { Actor } from '~/entities/actor';
 import type { Gun } from '~/entities/gun';
 import { POWERUP, Powerup } from '~/entities/powerup';
 import { Projectile } from '~/entities/projectile';
 import { COLLIDER_TAG, DEPTH } from '~/util/constants';
-import { Timer } from '~/util/timer';
 
 function getAxis(input: Input, neg: Key[], pos: Key[]) {
 	return +input.keyCheck(pos) - +input.keyCheck(neg);
@@ -24,8 +23,8 @@ const upKeys: Key[] = ['ArrowUp', 'KeyW'];
 const downKeys: Key[] = ['ArrowDown', 'KeyS'];
 
 export class Player extends Actor {
-	constructor(x: number, y: number) {
-		super(x, y, revolver, COLLIDER_TAG.ENEMY_PROJECTILE);
+	constructor(x: number, y: number, gun: GunData) {
+		super(x, y, gun, COLLIDER_TAG.ENEMY_PROJECTILE);
 
 		const sprite = Sprite.createRect(32, 32, 'cyan');
 		sprite.centerOO();
