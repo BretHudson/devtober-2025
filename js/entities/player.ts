@@ -114,7 +114,7 @@ export class Player extends Actor {
 			);
 		}
 
-		this.aim = input.mouse.pos.add(this.scene.camera);
+		this.aim = this.scene.mouse;
 
 		if (input.mouseCheck()) {
 			this.shoot(this.aim.sub(this.pos));
