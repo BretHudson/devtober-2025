@@ -6,8 +6,12 @@ export class BaseEntity extends Entity<GameScene> {
 		return this.scene.player;
 	}
 
+	get isPlayerAlive() {
+		return this.scene.player.alive;
+	}
+
 	deltaToPlayer() {
-		return this.player?.pos.sub(this.pos);
+		return this.player.pos.sub(this.pos);
 	}
 
 	removeSelf() {

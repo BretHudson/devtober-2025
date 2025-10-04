@@ -3,7 +3,7 @@ import { Camera } from 'canvas-lord/util/camera';
 import { Ctx } from 'canvas-lord/util/canvas';
 import { createComponent } from 'canvas-lord/util/components';
 import { Draw } from 'canvas-lord/util/draw';
-import { BaseEntity } from '~/entities/base-entity';
+import { Actor } from '~/entities/actor';
 import { positionItemInRow } from '~/util/math';
 
 export const healthComponent = createComponent({
@@ -11,8 +11,8 @@ export const healthComponent = createComponent({
 	cur: 3,
 });
 
-export const renderHealth = (ctx: Ctx, camera: Camera, entity: BaseEntity) => {
-	const health = entity.component(healthComponent);
+export const renderHealth = (ctx: Ctx, camera: Camera, entity: Actor) => {
+	const { health } = entity;
 	if (!health) {
 		console.warn('this entity does not have a health component');
 		return;

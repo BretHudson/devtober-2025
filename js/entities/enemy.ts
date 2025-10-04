@@ -38,9 +38,8 @@ export class Enemy extends Actor {
 
 	update(): void {
 		const toPlayer = this.deltaToPlayer();
-		const canSeePlayer =
-			toPlayer !== undefined && toPlayer.magnitude < viewRadius;
-		if (this.player && canSeePlayer) {
+		const canSeePlayer = toPlayer.magnitude < viewRadius;
+		if (this.player.alive && canSeePlayer) {
 			this.aim = this.player.pos;
 			this.shoot(toPlayer);
 		}

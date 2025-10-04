@@ -42,14 +42,7 @@ export class HUD extends BaseEntity {
 	}
 
 	updateHealth() {
-		// TODO(bret): this is hacky bc of the way we're doing death
-		const health = this.player?.component(healthComponent);
-		if (!health) {
-			this.healthSprites.forEach((sprite) => {
-				sprite.color = 'gray';
-			});
-			return;
-		}
+		const health = this.player.component(healthComponent)!;
 
 		while (health.max > this.healthSprites.length) {
 			this.addHealthSprite(this.healthSprites.length);

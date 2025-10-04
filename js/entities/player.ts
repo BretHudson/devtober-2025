@@ -60,12 +60,6 @@ export class Player extends Actor {
 		this.renderHealth = false;
 	}
 
-	get health() {
-		const health = this.component(healthComponent);
-		if (!health) throw new Error('does not have health');
-		return health;
-	}
-
 	addTimer(timer: Timer) {
 		this.timers.push(timer);
 		timer.onFinish.add(() => this.removeTimer(timer));
@@ -150,7 +144,7 @@ export class Player extends Actor {
 			case POWERUP.HEAL:
 				if (health.cur < health.max) {
 					consumed = true;
-					++health.cur;
+					this.heal(1);
 				}
 				break;
 			case POWERUP.SPEED_UP: {

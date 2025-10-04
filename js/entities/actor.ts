@@ -30,6 +30,20 @@ export class Actor extends BaseEntity {
 		return this.graphic as Sprite;
 	}
 
+	get health() {
+		const health = this.component(healthComponent);
+		if (!health) throw new Error('does not have health');
+		return health;
+	}
+
+	get alive() {
+		return this.health.cur > 0;
+	}
+
+	get dead() {
+		return this.health.cur <= 0;
+	}
+
 	constructor(x: number, y: number, gun: GunData, hurtBy: HurtBy) {
 		super(x, y);
 
@@ -78,6 +92,11 @@ export class Actor extends BaseEntity {
 			this.die();
 			return;
 		}
+	}
+
+	heal(amount: number): void {
+		const { health } = this;
+		health.cur = Math.min(health.cur + amount, health.max);
 	}
 
 	die(): void {

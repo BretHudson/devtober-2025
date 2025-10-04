@@ -17,7 +17,8 @@ import { COLLIDER_TAG, FONTS } from '~/util/constants';
 import { positionItemInRow } from '~/util/math';
 
 export class GameScene extends Scene {
-	player: Player | null = null;
+	// @ts-expect-error - this gets assigned, dw
+	player: Player;
 	cameraTarget: Entity | null = null;
 
 	constructor() {
@@ -83,12 +84,8 @@ export class GameScene extends Scene {
 		this.updateCamera();
 	}
 
-	get playerDead() {
-		return this.player === null;
-	}
-
 	update(input: Input): void {
-		if (this.playerDead && input.keyPressed(Keys.R)) {
+		if (this.player.dead && input.keyPressed(Keys.R)) {
 			this.engine.popScenes();
 			this.engine.pushScene(new GameScene());
 		}
@@ -99,7 +96,7 @@ export class GameScene extends Scene {
 	}
 
 	render(ctx: Ctx): void {
-		if (this.playerDead) {
+		if (this.player.dead) {
 			Draw.text(
 				ctx,
 				{
@@ -155,10 +152,7 @@ export class GameScene extends Scene {
 	}
 
 	removePlayer() {
-		if (!this.player) return;
-
 		this.player.removeSelf();
-		this.player = null;
 		this.cameraTarget = null;
 	}
 
