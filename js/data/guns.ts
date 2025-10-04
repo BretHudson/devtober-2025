@@ -1,4 +1,4 @@
-import { ImageAsset } from 'canvas-lord/core/asset-manager';
+import { AudioAsset, ImageAsset } from 'canvas-lord/core/asset-manager';
 import { Vec2 } from 'canvas-lord/math';
 import { radToDeg } from 'canvas-lord/math/misc';
 import type { Camera } from 'canvas-lord/util/camera';
@@ -12,16 +12,21 @@ import { ProjectileType } from './projectiles';
 export interface GunData {
 	imageSrc: string;
 	image: ImageAsset;
+	audioSrc: string;
+	audio: AudioAsset;
 	color: CSSColor;
 	projectile: ProjectileType;
 	cooldown: number;
 }
 
 const nullImage = null as unknown as ImageAsset;
+const nullAudio = null as unknown as AudioAsset;
 
 const revolver: GunData = {
 	imageSrc: ASSETS.GFX.REVOLVER,
 	image: nullImage,
+	audioSrc: ASSETS.SFX.SHOOT_1,
+	audio: nullAudio,
 	color: 'pink',
 	projectile: 'revolver',
 	cooldown: 20,
@@ -30,6 +35,8 @@ const revolver: GunData = {
 const machineGun: GunData = {
 	imageSrc: ASSETS.GFX.MACHINE_GUN,
 	image: nullImage,
+	audioSrc: ASSETS.SFX.SHOOT_2,
+	audio: nullAudio,
 	color: 'yellow',
 	projectile: 'machine-gun',
 	cooldown: 6,
@@ -38,6 +45,8 @@ const machineGun: GunData = {
 const rifle: GunData = {
 	imageSrc: ASSETS.GFX.SHOTGUN,
 	image: nullImage,
+	audioSrc: ASSETS.SFX.SHOOT_3,
+	audio: nullAudio,
 	color: 'silver',
 	projectile: 'rifle',
 	cooldown: 30,
@@ -46,6 +55,8 @@ const rifle: GunData = {
 const enemyGun: GunData = {
 	imageSrc: ASSETS.GFX.ENEMY_GUN,
 	image: nullImage,
+	audioSrc: ASSETS.SFX.SHOOT_1,
+	audio: nullAudio,
 	color: 'blue',
 	projectile: 'basic',
 	cooldown: 30,

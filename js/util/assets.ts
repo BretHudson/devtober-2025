@@ -11,7 +11,12 @@ const GFX = {
 } as const;
 
 const SFX = {
-	//
+	HIT_1: 'sfx/hit-1.wav',
+	HIT_2: 'sfx/hit-2.wav',
+	SHOOT_1: 'sfx/shoot-1.wav',
+	SHOOT_2: 'sfx/shoot-2.wav',
+	SHOOT_3: 'sfx/shoot-3.wav',
+	POWERUP: 'sfx/powerup.wav',
 } as const;
 
 export const ASSETS = {

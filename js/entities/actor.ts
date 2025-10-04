@@ -1,3 +1,4 @@
+import { Sfx } from 'canvas-lord/core/asset-manager';
 import { Input } from 'canvas-lord/core/input';
 import type { Sprite } from 'canvas-lord/graphic';
 import { Vec2 } from 'canvas-lord/math';
@@ -7,6 +8,8 @@ import { healthComponent, renderHealth } from '~/components/health';
 import { GunData, renderGun } from '~/data/guns';
 import { BaseEntity } from '~/entities/base-entity';
 import { Projectile } from '~/entities/projectile';
+import { assetManager, ASSETS } from '~/util/assets';
+import { COLLIDER_TAG } from '~/util/constants';
 import { Timer } from '~/util/timer';
 import type { DamageInfo } from '~/util/types';
 
@@ -60,6 +63,14 @@ export class Actor extends BaseEntity {
 		this.hitStunTimer.reset(4);
 		this.sprite.color = 'white';
 
+		let src: string = ASSETS.SFX.HIT_1;
+		if (this.hurtBy === COLLIDER_TAG.ENEMY_PROJECTILE) {
+			src = ASSETS.SFX.HIT_2;
+		}
+		const audio = assetManager.audio.get(src);
+		if (!audio) throw new Error();
+		Sfx.play(audio);
+
 		if (health.cur <= 0) {
 			this.die();
 			return;
@@ -74,6 +85,8 @@ export class Actor extends BaseEntity {
 		if (this.cooldown.running) return;
 
 		this.scene.addEntity(new Projectile(this, target, this.gun.projectile));
+
+		Sfx.play(this.gun.audio, 0.2);
 
 		this.cooldown.reset(this.gun.cooldown);
 	}

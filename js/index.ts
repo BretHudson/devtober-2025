@@ -8,6 +8,9 @@ import { FONTS } from './util/constants';
 Object.values(ASSETS.GFX).forEach((asset) => {
 	assetManager.addImage(asset);
 });
+Object.values(ASSETS.SFX).forEach((asset) => {
+	assetManager.addAudio(asset);
+});
 
 const loadFont = async (name: string, fileName: string) => {
 	const font = new FontFace(name, `url("${fileName}")`);
@@ -24,6 +27,10 @@ assetManager.onLoad.add(() => {
 		const image = assetManager.sprites.get(gun.imageSrc);
 		if (!image) throw new Error();
 		gun.image = image;
+
+		const audio = assetManager.audio.get(gun.audioSrc);
+		if (!audio) throw new Error();
+		gun.audio = audio;
 	});
 
 	game = new Game('game', {
