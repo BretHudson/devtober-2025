@@ -1,6 +1,7 @@
+import { BoxCollider } from 'canvas-lord/collider';
+import { Sfx } from 'canvas-lord/core/asset-manager';
 import type { Input, Key } from 'canvas-lord/core/input';
 import { Keys } from 'canvas-lord/core/input';
-import { BoxCollider } from 'canvas-lord/collider';
 import { Sprite } from 'canvas-lord/graphic';
 import { Vec2 } from 'canvas-lord/math';
 import { Camera } from 'canvas-lord/util/camera';
@@ -10,8 +11,7 @@ import { healthComponent } from '~/components/health';
 import { GunData } from '~/data/guns';
 import { Actor } from '~/entities/actor';
 import type { Gun } from '~/entities/gun';
-import { POWERUP, Powerup } from '~/entities/powerup';
-import { Projectile } from '~/entities/projectile';
+import { POWERUP, Powerup, PowerupData } from '~/entities/powerup';
 import { assetManager, ASSETS } from '~/util/assets';
 import { COLLIDER_TAG, DEPTH } from '~/util/constants';
 import { Timer } from '~/util/timer';
@@ -25,7 +25,13 @@ const rightKeys: Key[] = [Keys.ArrowRight, Keys.D];
 const upKeys: Key[] = [Keys.ArrowUp, Keys.W];
 const downKeys: Key[] = [Keys.ArrowDown, Keys.S];
 
+interface StatusEffect {
+	powerup: PowerupData;
+	timer: Timer;
+}
+
 export class Player extends Actor {
+	statuses: StatusEffect[] = [];
 	timers: Timer[] = [];
 
 	speedUp = false;
@@ -118,6 +124,9 @@ export class Player extends Actor {
 
 		const gun = this.collideEntity<Gun>(this.x, this.y, COLLIDER_TAG.GUN);
 		if (gun && input.keyPressed(Keys.E)) {
+			const asset = assetManager.audio.get(ASSETS.SFX.PICK_UP_WEAPON);
+			if (!asset) throw new Error();
+			Sfx.play(asset, 0.5, 0.2);
 			this.gun = gun.gunData;
 			this.cooldown.earlyFinish();
 		}
@@ -136,11 +145,27 @@ export class Player extends Actor {
 		this.scene.removePlayer();
 	}
 
-	processPowerup(powerup: Powerup) {
+	addStatus(powerup: PowerupData, callback?: () => void) {
+		if (powerup.type !== 'status') return;
+
+		const timer = new Timer(60 * 5);
+		if (callback) timer.onFinish.add(callback);
+		this.addTimer(timer);
+
+		this.statuses.push({
+			powerup,
+			timer,
+		});
+	}
+
+	processPowerup(powerupEntity: Powerup) {
 		const { health } = this;
 
+		const { type: powerup } = powerupEntity;
+
 		let consumed = false;
-		switch (powerup.type) {
+		let callback: (() => void) | undefined;
+		switch (powerup) {
 			case POWERUP.HEAL:
 				if (health.cur < health.max) {
 					consumed = true;
@@ -150,16 +175,18 @@ export class Player extends Actor {
 			case POWERUP.SPEED_UP: {
 				this.speedUp = true;
 				consumed = true;
-				const timer = new Timer(60 * 5);
-				timer.onFinish.add(() => (this.speedUp = false));
-				this.addTimer(timer);
+				callback = () => (this.speedUp = false);
 				break;
 			}
 			default:
 				throw new Error(`unsupported powerup "${powerup.type}"`);
 		}
 
-		if (consumed) powerup.removeSelf();
+		if (powerup.type === 'status') {
+			this.addStatus(powerup, callback);
+		}
+
+		if (consumed) powerupEntity.removeSelf();
 	}
 
 	render(ctx: Ctx, camera: Camera): void {

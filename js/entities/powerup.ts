@@ -3,23 +3,48 @@ import { BaseEntity } from './base-entity';
 import { CircleCollider } from 'canvas-lord/collider';
 import { COLLIDER_TAG } from '~/util/constants';
 import { CSSColor } from 'canvas-lord/util/types';
+import { createTitle } from '~/util/ui';
+
+export type PowerupData = {
+	name: string;
+	color: CSSColor;
+} & (
+	| {
+			type: 'one-time';
+	  }
+	| {
+			type: 'status';
+			duration: number;
+	  }
+);
 
 export const POWERUP = {
-	HEAL: 'heal',
-	SPEED_UP: 'speed-up',
+	HEAL: {
+		//
+		name: 'Heal',
+		color: 'red',
+		type: 'one-time',
+	} as PowerupData,
+	SPEED_UP: {
+		//
+		name: 'Speed Up',
+		color: '#77f',
+		type: 'status',
+		duration: 5, // seconds
+	} as PowerupData,
 } as const;
 
-type PowerupType = (typeof POWERUP)[keyof typeof POWERUP];
-
 export class Powerup extends BaseEntity {
-	type: PowerupType;
+	type: PowerupData;
 
-	constructor(type: PowerupType, x: number, y: number) {
+	constructor(type: PowerupData, x: number, y: number) {
 		super(x, y);
 
 		const sprite = Sprite.createCircle(16, 'white');
 		sprite.centerOO();
 		this.graphic = sprite;
+
+		this.addGraphic(createTitle(type.name));
 
 		const collider = new CircleCollider(16);
 		collider.tag = COLLIDER_TAG.POWERUP;
@@ -28,20 +53,7 @@ export class Powerup extends BaseEntity {
 
 		this.type = type;
 
-		let color: CSSColor;
-		switch (type) {
-			case POWERUP.HEAL:
-				color = 'red';
-				break;
-			case POWERUP.SPEED_UP: {
-				color = '#77f';
-				break;
-			}
-			default:
-				throw new Error(`unsupported powerup "${type}"`);
-		}
-
-		sprite.color = color;
-		collider.color = color;
+		sprite.color = type.color as string;
+		collider.color = type.color;
 	}
 }
