@@ -30,6 +30,14 @@ export class Player extends Actor {
 
 	speedUp = false;
 
+	get collider(): BoxCollider {
+		return super.collider as BoxCollider;
+	}
+
+	set collider(collider: BoxCollider) {
+		super.collider = collider;
+	}
+
 	constructor(x: number, y: number, gun: GunData) {
 		super(x, y, gun, COLLIDER_TAG.ENEMY_PROJECTILE);
 
@@ -78,13 +86,33 @@ export class Player extends Actor {
 		const hInput = getAxis(input, leftKeys, rightKeys);
 		const vInput = getAxis(input, upKeys, downKeys);
 
-		const move = new Vec2(hInput, vInput);
-		if (move.magnitude > 0) move.normalize();
+		const speed = this.speedUp ? 5 : 3;
+		let vel = new Vec2(hInput, vInput);
+		if (vel.magnitude > 0) vel.normalize();
+		vel = vel.scale(speed);
 
-		let speed = this.speedUp ? 5 : 3;
+		this.x += vel.x;
+		this.y += vel.y;
 
-		this.x += move.x * speed;
-		this.y += move.y * speed;
+		// for now, do the hacky dumb thing
+		if (this.scene.bounds) {
+			const offset = new Vec2(
+				this.collider.width,
+				this.collider.height,
+			).invScale(2);
+			offset.x += 32;
+			offset.y += 32;
+			this.x = Math.clamp(
+				this.x,
+				this.scene.bounds[0] + offset.x,
+				this.scene.bounds[2] - offset.y,
+			);
+			this.y = Math.clamp(
+				this.y,
+				this.scene.bounds[1] + offset.x,
+				this.scene.bounds[3] - offset.y,
+			);
+		}
 
 		this.aim = input.mouse.pos.add(this.scene.camera);
 
