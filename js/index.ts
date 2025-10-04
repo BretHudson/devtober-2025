@@ -7,7 +7,7 @@ import { positionItemInRow } from './util/math';
 import { allGunData } from './data/guns';
 import { assetManager, ASSETS } from './util/assets';
 import { GameScene } from './scenes/game-scene';
-import { Powerup } from './entities/powerup';
+import { POWERUP, Powerup } from './entities/powerup';
 import { renderPattern } from './util/background-pattern';
 
 // load assets
@@ -40,7 +40,8 @@ assetManager.onLoad.add(() => {
 	scene.addEntity(scene.player);
 	scene.follow(scene.player);
 
-	scene.addEntity(new Powerup('heal', 0, -fourth.y * 1.2));
+	scene.addEntity(new Powerup(POWERUP.HEAL, 0, -fourth.y * 1.2));
+	scene.addEntity(new Powerup(POWERUP.SPEED_UP, 0, -fourth.y * 0.9));
 
 	scene.addEntity(new Enemy(fourth.x, fourth.y, enemyGun));
 	scene.addEntity(new Enemy(fourth.x, -fourth.y, enemyGun));

@@ -12,6 +12,7 @@ import type { Gun } from '~/entities/gun';
 import { POWERUP, Powerup } from '~/entities/powerup';
 import { Projectile } from '~/entities/projectile';
 import { COLLIDER_TAG, DEPTH } from '~/util/constants';
+import { Timer } from '~/util/timer';
 
 function getAxis(input: Input, neg: Key[], pos: Key[]) {
 	return +input.keyCheck(pos) - +input.keyCheck(neg);
@@ -23,6 +24,10 @@ const upKeys: Key[] = ['ArrowUp', 'KeyW'];
 const downKeys: Key[] = ['ArrowDown', 'KeyS'];
 
 export class Player extends Actor {
+	timers: Timer[] = [];
+
+	speedUp = false;
+
 	constructor(x: number, y: number, gun: GunData) {
 		super(x, y, gun, COLLIDER_TAG.ENEMY_PROJECTILE);
 
@@ -47,6 +52,24 @@ export class Player extends Actor {
 		return health;
 	}
 
+	addTimer(timer: Timer) {
+		this.timers.push(timer);
+		timer.onFinish.add(() => this.removeTimer(timer));
+	}
+
+	removeTimer(timer: Timer) {
+		const index = this.timers.indexOf(timer);
+		if (index < 0) return;
+
+		this.timers.splice(index, 1);
+	}
+
+	preUpdate(): void {
+		super.preUpdate();
+
+		this.timers.forEach((timer) => timer.tick());
+	}
+
 	update(input: Input): void {
 		const hInput = getAxis(input, leftKeys, rightKeys);
 		const vInput = getAxis(input, upKeys, downKeys);
@@ -54,8 +77,10 @@ export class Player extends Actor {
 		const move = new Vec2(hInput, vInput);
 		if (move.magnitude > 0) move.normalize();
 
-		this.x += move.x * 3;
-		this.y += move.y * 3;
+		let speed = this.speedUp ? 5 : 3;
+
+		this.x += move.x * speed;
+		this.y += move.y * speed;
 
 		this.aim = input.mouse.pos.add(this.scene.camera);
 
@@ -102,6 +127,14 @@ export class Player extends Actor {
 					++health.cur;
 				}
 				break;
+			case POWERUP.SPEED_UP: {
+				this.speedUp = true;
+				consumed = true;
+				const timer = new Timer(60 * 5);
+				timer.onFinish.add(() => (this.speedUp = false));
+				this.addTimer(timer);
+				break;
+			}
 			default:
 				throw new Error(`unsupported powerup "${powerup.type}"`);
 		}
