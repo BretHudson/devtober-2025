@@ -12,7 +12,6 @@ import { GunData } from '~/data/guns';
 import { Actor } from '~/entities/actor';
 import type { Gun } from '~/entities/gun';
 import { POWERUP, Powerup, PowerupData } from '~/entities/powerup';
-import { GunGraphic } from '~/graphic/GunGraphic';
 import { assetManager, ASSETS } from '~/util/assets';
 import { COLLIDER_TAG, DEPTH } from '~/util/constants';
 import { Timer } from '~/util/timer';
@@ -39,7 +38,7 @@ export class Player extends Actor {
 	speedUp = false;
 	invincible = false;
 
-	gunGfx: GunGraphic;
+	sinTimer = 0;
 
 	get collider(): BoxCollider {
 		return super.collider as BoxCollider;
@@ -49,8 +48,8 @@ export class Player extends Actor {
 		super.collider = collider;
 	}
 
-	constructor(x: number, y: number, gun: GunData) {
-		super(x, y, gun, COLLIDER_TAG.ENEMY_PROJECTILE);
+	constructor(x: number, y: number, gun?: GunData) {
+		super(x, y, COLLIDER_TAG.ENEMY_PROJECTILE, gun);
 
 		const asset = assetManager.sprites.get(ASSETS.GFX.MOUSE);
 		if (!asset) throw new Error();
@@ -66,9 +65,6 @@ export class Player extends Actor {
 		this.colliderVisible = true;
 
 		this.addComponent(healthComponent);
-
-		this.gunGfx = new GunGraphic(gun);
-		this.addGraphic(this.gunGfx);
 
 		this.depth = DEPTH.PLAYER;
 
@@ -92,8 +88,6 @@ export class Player extends Actor {
 
 		this.timers.splice(index, 1);
 	}
-
-	sinTimer = 0;
 
 	update(input: Input): void {
 		const hInput = getAxis(input, leftKeys, rightKeys);
@@ -133,17 +127,17 @@ export class Player extends Actor {
 
 		this.aimDir = this.scene.mouse.sub(this.pos);
 
-		if (input.mouseCheck()) {
-			this.shoot(this.aimDir);
-		}
-
-		const gun = this.collideEntity<Gun>(this.x, this.y, COLLIDER_TAG.GUN);
-		if (gun && input.keyPressed(Keys.E)) {
+		const gunEntity = this.collideEntity<Gun>(
+			this.x,
+			this.y,
+			COLLIDER_TAG.GUN,
+		);
+		if (gunEntity && input.keyPressed(Keys.E)) {
 			const asset = assetManager.audio.get(ASSETS.SFX.PICK_UP_WEAPON);
 			if (!asset) throw new Error();
 			Sfx.play(asset, 0.5, 0.2);
-			this.gun = gun.gunData;
-			this.gunGfx.asset = this.gun.image;
+			this.gun = gunEntity.gunData;
+			this.gunGfx?.setGun(gunEntity.gunData);
 			this.cooldown.earlyFinish();
 		}
 
@@ -155,6 +149,11 @@ export class Player extends Actor {
 		if (powerup) this.processPowerup(powerup);
 
 		super.update();
+
+		this.gunGfx?.update();
+		if (input.mouseCheck()) {
+			this.shoot(this.aimDir);
+		}
 	}
 
 	postUpdate(): void {

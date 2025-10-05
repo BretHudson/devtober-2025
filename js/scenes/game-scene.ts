@@ -59,21 +59,21 @@ export class GameScene extends Scene {
 			this.engine.height,
 		).invScale(4);
 
-		const { enemyGun, rock } = allGunData;
+		const { enemyGun, revolver, rock } = allGunData;
 
 		this.addEntity(new HUD());
 
-		this.player = new Player(0, 0, rock);
+		this.player = new Player(0, 0, revolver);
 		this.addEntity(this.player);
 		this.follow(this.player);
 
 		this.addEntity(new Powerup(POWERUP.INVINCIBILITY, 0, quarterSize.y));
 		this.addEntity(new Powerup(POWERUP.SPEED_UP, 0, -quarterSize.y));
 
-		this.addEntity(new Enemy(quarterSize.x, quarterSize.y, enemyGun));
-		this.addEntity(new Enemy(quarterSize.x, -quarterSize.y, enemyGun));
-		this.addEntity(new Enemy(-quarterSize.x, -quarterSize.y, enemyGun));
-		this.addEntity(new Enemy(-quarterSize.x, quarterSize.y, enemyGun));
+		this.addEntity(new Enemy(quarterSize.x, quarterSize.y));
+		this.addEntity(new Enemy(quarterSize.x, -quarterSize.y));
+		this.addEntity(new Enemy(-quarterSize.x, -quarterSize.y));
+		this.addEntity(new Enemy(-quarterSize.x, quarterSize.y));
 
 		Object.values(allGunData).forEach((g, i, arr) => {
 			const x = positionItemInRow(i, arr.length, 16, 48);

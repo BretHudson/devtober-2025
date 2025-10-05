@@ -8,7 +8,7 @@ import {
 } from '~/data/projectiles';
 import type { Actor } from '~/entities/actor';
 import { BaseEntity } from '~/entities/base-entity';
-import { COLLIDER_TAG } from '~/util/constants';
+import { COLLIDER_TAG, DEPTH } from '~/util/constants';
 import { Timer } from '~/util/timer';
 
 export class Projectile extends BaseEntity {
@@ -25,7 +25,8 @@ export class Projectile extends BaseEntity {
 	}
 
 	constructor(owner: Actor, dir: Vec2, typeName: ProjectileType) {
-		super(owner.x, owner.y);
+		const pos = owner.pos.add(owner.gunGfx!.shootPos);
+		super(pos.x, pos.y);
 
 		const type = projectiles.get(typeName);
 		if (!type) throw new Error(`Missing ${typeName} projectile type`);
@@ -64,6 +65,8 @@ export class Projectile extends BaseEntity {
 		this.collider = collider;
 
 		this.colliderVisible = true;
+
+		this.depth = DEPTH.PROJECTILE;
 	}
 
 	update(): void {

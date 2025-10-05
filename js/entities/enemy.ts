@@ -14,13 +14,13 @@ import { assetManager, ASSETS } from '~/util/assets';
 import { COLLIDER_TAG } from '~/util/constants';
 import { SEEDS } from '~/util/random';
 
-const viewRadius = 100;
+const viewRadius = 100 * 2;
 
 export class Enemy extends Actor {
 	static dropRandom = new Random(SEEDS.ENEMY_DROP);
 
-	constructor(x: number, y: number, gun: GunData) {
-		super(x, y, gun, COLLIDER_TAG.PROJECTILE);
+	constructor(x: number, y: number, gun?: GunData) {
+		super(x, y, COLLIDER_TAG.PROJECTILE, gun);
 
 		const asset = assetManager.sprites.get(ASSETS.GFX.MOUSE_TRAP_2);
 		if (!asset) throw new Error();
@@ -45,19 +45,18 @@ export class Enemy extends Actor {
 		this.colliderVisible = true;
 
 		this.addComponent(healthComponent);
-
-		this.addGraphic(new GunGraphic(gun));
 	}
 
 	update(): void {
+		super.update();
+
+		this.gunGfx?.update();
 		const toPlayer = this.deltaToPlayer();
 		const canSeePlayer = toPlayer.magnitude < viewRadius;
 		if (this.player.alive && canSeePlayer) {
 			this.aimDir = toPlayer;
 			this.shoot(toPlayer);
 		}
-
-		super.update();
 	}
 
 	die(): void {

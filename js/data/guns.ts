@@ -1,4 +1,5 @@
 import { AudioAsset, ImageAsset } from 'canvas-lord/core/asset-manager';
+import { Vec2 } from 'canvas-lord/math';
 import { CSSColor } from 'canvas-lord/util/types';
 import { ProjectileType } from '~/data/projectiles';
 import { ASSETS } from '~/util/assets';
@@ -13,6 +14,8 @@ export interface GunData {
 	projectile: ProjectileType;
 	cooldown: number;
 	spreadAngle: number;
+	armLength: number;
+	origin: Vec2;
 }
 
 const nullImage = null as unknown as ImageAsset;
@@ -28,6 +31,8 @@ const defaults: GunData = {
 	projectile: 'basic',
 	cooldown: 10,
 	spreadAngle: 0,
+	armLength: 30,
+	origin: Vec2.zero,
 };
 
 // damage
@@ -44,6 +49,8 @@ export const allGunData = {
 		color: 'pink',
 		cooldown: 20,
 		spreadAngle: 4,
+		origin: new Vec2(38, -10),
+		armLength: 20,
 	} as GunData,
 	rock: {
 		...defaults,
@@ -54,6 +61,8 @@ export const allGunData = {
 		cooldown: 60,
 		spreadAngle: 0,
 		projectile: 'rock',
+		origin: new Vec2(20, 0),
+		armLength: 30,
 	} as GunData,
 	machineGun: {
 		//

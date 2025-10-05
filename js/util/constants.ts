@@ -14,6 +14,8 @@ export const DEPTH = {
 	DEFAULT: 0,
 	PLAYER: -1,
 
+	PROJECTILE: -2,
+
 	HUD: -1000,
 };
 
