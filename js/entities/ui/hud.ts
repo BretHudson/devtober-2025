@@ -1,4 +1,4 @@
-import { GraphicList, Sprite } from 'canvas-lord/graphic';
+import { GraphicList, Sprite, Text } from 'canvas-lord/graphic';
 import { healthComponent } from '~/components/health';
 import { BaseEntity } from '~/entities/base-entity';
 import { DEPTH } from '~/util/constants';
@@ -20,6 +20,8 @@ export class HUD extends BaseEntity {
 	statusBGSprites: Sprite[] = [];
 	statusSprites: Sprite[] = [];
 
+	ammoText: Text;
+
 	constructor() {
 		super();
 
@@ -29,6 +31,11 @@ export class HUD extends BaseEntity {
 		this.addStatusSprite(0);
 		this.addStatusSprite(1);
 		this.addStatusSprite(2);
+
+		const ammoText = this.addGraphic(new Text('AMMO', 10, 50));
+		ammoText.scrollX = 0;
+		ammoText.scrollY = 0;
+		this.ammoText = ammoText;
 	}
 
 	addHealthSprite(index: number) {
@@ -66,6 +73,7 @@ export class HUD extends BaseEntity {
 	postUpdate(): void {
 		this.updateHealth();
 		this.updateStatuses();
+		this.updateAmmo();
 	}
 
 	updateHealth() {
@@ -96,5 +104,17 @@ export class HUD extends BaseEntity {
 			sprite.scaleX = status.timer.percentLeft;
 		});
 		statuses.forEach((status, i) => {});
+	}
+
+	updateAmmo() {
+		const { ammo, maxAmmo, gun } = this.player;
+		const fuck = [
+			//
+			'Ammo:',
+			gun?.ammo ?? '-',
+			`(${ammo} remaining)`,
+			,
+		].join(' ');
+		this.ammoText.str = fuck;
 	}
 }

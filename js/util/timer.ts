@@ -29,6 +29,10 @@ export class Timer {
 		}
 	}
 
+	stop() {
+		this.timeLeft = 0;
+	}
+
 	reset(duration?: number) {
 		if (duration) this.duration = duration;
 		this.timeLeft = this.duration;
@@ -39,6 +43,7 @@ export class Timer {
 	}
 
 	earlyFinish() {
-		this.timeLeft = 0;
+		this.stop();
+		this.onFinish.invoke();
 	}
 }

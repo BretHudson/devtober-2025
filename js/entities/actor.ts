@@ -2,18 +2,16 @@ import { Sfx } from 'canvas-lord/core/asset-manager';
 import { Input } from 'canvas-lord/core/input';
 import type { Sprite } from 'canvas-lord/graphic';
 import { Vec2 } from 'canvas-lord/math';
-import { degToRad } from 'canvas-lord/math/misc';
 import type { Camera } from 'canvas-lord/util/camera';
 import type { Ctx } from 'canvas-lord/util/canvas';
 import { Draw } from 'canvas-lord/util/draw';
+import { GunComponent } from '~/components/gun';
 import { healthComponent, renderHealth } from '~/components/health';
 import { GunData } from '~/data/guns';
 import { BaseEntity } from '~/entities/base-entity';
 import { Projectile } from '~/entities/projectile';
-import { GunComponent } from '~/graphic/GunGraphic';
 import { assetManager, ASSETS } from '~/util/assets';
 import { COLLIDER_TAG } from '~/util/constants';
-import { randomSpreadAngle } from '~/util/random';
 import { Timer } from '~/util/timer';
 import type { DamageInfo } from '~/util/types';
 
@@ -21,7 +19,6 @@ type HurtBy = string;
 
 export class Actor extends BaseEntity {
 	aimDir = Vec2.right;
-	cooldown = new Timer();
 	hurtBy: HurtBy;
 	renderHealth = true;
 
@@ -31,6 +28,9 @@ export class Actor extends BaseEntity {
 
 	fractVel = new Vec2();
 	velocity = new Vec2();
+
+	ammo: number = 20;
+	maxAmmo: number = 50;
 
 	get sprite() {
 		return this.graphic as Sprite;
@@ -66,23 +66,12 @@ export class Actor extends BaseEntity {
 	}
 
 	switchGun(gunData?: GunData) {
-		if (!this.gun && gunData) {
-			this.gun = new GunComponent(gunData, this);
-			this.addGraphic(this.gun.sprite);
-		}
-
-		// if (gunData) {
-		// 	if (!this.gunGfx) {
-		// 		this.gunGfx = new GunGraphic(gunData);
-		// 		this.addGraphic(this.gunGfx);
-		// 	}
-		// 	this.cooldown.earlyFinish();
-		// }
-		this.gun?.setGun(gunData);
+		this.gun?.drop();
+		this.gun = gunData && new GunComponent(gunData, this);
 	}
 
 	preUpdate(): void {
-		this.cooldown.tick();
+		this.gun?.tick();
 		this.hitStunTimer.tick();
 	}
 
@@ -156,20 +145,15 @@ export class Actor extends BaseEntity {
 	}
 
 	shoot(target: Vec2) {
-		if (!this.gun) return;
+		this.gun?.shoot(target);
+	}
 
-		if (this.cooldown.running) return;
-
-		const angleOffset = randomSpreadAngle(this.gun.data.spreadAngle);
-		const dir = target.rotate(degToRad(angleOffset));
-
-		this.scene.addEntity(
-			new Projectile(this, dir, this.gun.data.projectile),
-		);
-
-		Sfx.play(this.gun.data.audio, 0.2, 0.2);
-
-		this.cooldown.reset(this.gun.data.cooldown);
+	reload(gun: GunComponent) {
+		if (this.ammo === 0) return false;
+		const give = Math.min(this.ammo, gun.ammoCapacity);
+		gun.ammo += give;
+		this.ammo -= give;
+		return true;
 	}
 
 	render(ctx: Ctx, camera: Camera): void {

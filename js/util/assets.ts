@@ -31,6 +31,8 @@ const SFX = {
 	POWERUP: 'sfx/powerup.wav',
 	PICK_UP_WEAPON: 'sfx/pick-up-weapon.wav',
 	THROW_ROCK: 'sfx/throw-rock.wav',
+	RELOAD_START: 'sfx/reload-start.wav',
+	RELOAD_END: 'sfx/reload-end.wav',
 } as const;
 
 export const ASSETS = {

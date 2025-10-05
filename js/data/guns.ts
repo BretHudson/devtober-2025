@@ -16,6 +16,8 @@ export interface GunData {
 	spreadAngle: number;
 	armLength: number;
 	origin: Vec2;
+	ammoCapacity: number;
+	reloadTime: number;
 }
 
 const nullImage = null as unknown as ImageAsset;
@@ -33,6 +35,8 @@ const defaults: GunData = {
 	spreadAngle: 0,
 	armLength: 30,
 	origin: Vec2.zero,
+	ammoCapacity: 10,
+	reloadTime: 0.4,
 };
 
 // damage
