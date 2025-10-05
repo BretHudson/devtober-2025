@@ -22,10 +22,14 @@ export class GunGraphic extends Sprite {
 		this.setGun(gun);
 	}
 
-	setGun(gun: GunData) {
-		this.gun = gun;
-		this.asset = gun.image;
-		this.originY = this.height / 2;
+	setGun(gun?: GunData) {
+		if (gun) {
+			this.gun = gun;
+			this.asset = gun.image;
+			this.originY = this.height / 2;
+		}
+
+		this.visible = gun !== undefined;
 	}
 
 	update(): void {

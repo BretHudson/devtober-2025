@@ -54,17 +54,25 @@ export class Actor extends BaseEntity {
 		this.addComponent(healthComponent);
 
 		// TODO(bret): Need to make sure this exists when setting gun
-		if (gun) {
-			this.gun = gun;
-			this.gunGfx = new GunGraphic(gun);
-			this.addGraphic(this.gunGfx);
-		}
+		this.switchGun(gun);
 
 		this.hurtBy = hurtBy;
 
 		this.hitStunTimer.onFinish.add(() => {
 			this.sprite.color = undefined;
 		});
+	}
+
+	switchGun(gun?: GunData) {
+		this.gun = gun;
+		if (gun) {
+			if (!this.gunGfx) {
+				this.gunGfx = new GunGraphic(gun);
+				this.addGraphic(this.gunGfx);
+			}
+			this.cooldown.earlyFinish();
+		}
+		this.gunGfx?.setGun(gun);
 	}
 
 	preUpdate(): void {

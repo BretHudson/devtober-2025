@@ -136,9 +136,7 @@ export class Player extends Actor {
 			const asset = assetManager.audio.get(ASSETS.SFX.PICK_UP_WEAPON);
 			if (!asset) throw new Error();
 			Sfx.play(asset, 0.5, 0.2);
-			this.gun = gunEntity.gunData;
-			this.gunGfx?.setGun(gunEntity.gunData);
-			this.cooldown.earlyFinish();
+			this.switchGun(gunEntity.gunData);
 		}
 
 		const powerup = this.collideEntity<Powerup>(
