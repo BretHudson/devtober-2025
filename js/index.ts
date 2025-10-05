@@ -4,6 +4,7 @@ import { GameScene } from './scenes/game-scene';
 import { assetManager, ASSETS } from './util/assets';
 import { FONTS } from './util/constants';
 import { ProjectileFlyweight, projectiles } from './data/projectiles';
+import { ENEMIES } from './data/enemies';
 
 // load assets
 Object.values(ASSETS.GFX).forEach((asset) => {
@@ -54,6 +55,23 @@ assetManager.onLoad.add(() => {
 			const error = e as Error;
 			const fileName = error.message;
 			error.message = `[Projectile] Cannot find "${fileName}"`;
+
+			throw error;
+		}
+	});
+
+	// load enemies
+	Object.values(ENEMIES).forEach((enemy) => {
+		try {
+			if (enemy.imageSrc === '') return;
+
+			const image = assetManager.sprites.get(enemy.imageSrc);
+			if (!image) throw new Error(enemy.imageSrc);
+			enemy.image = image;
+		} catch (e) {
+			const error = e as Error;
+			const fileName = error.message;
+			error.message = `[Enemy] Cannot find "${fileName}" ("${enemy.name}")`;
 
 			throw error;
 		}

@@ -93,7 +93,7 @@ export class Player extends Actor {
 		const hInput = getAxis(input, leftKeys, rightKeys);
 		const vInput = getAxis(input, upKeys, downKeys);
 
-		const speed = this.speedUp ? 5 : 3;
+		const speed = this.speedUp ? 7.5 : 5;
 		let vel = new Vec2(hInput, vInput);
 		if (vel.magnitude > 0) {
 			this.sinTimer += 1;

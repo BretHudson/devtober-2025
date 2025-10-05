@@ -16,6 +16,7 @@ const GFX = {
 	MOUSE_TRAP_2: 'gfx/mouse-trap-2.png',
 	CHEESE: 'gfx/cheese.png',
 	ROCK: 'gfx/rock.png',
+	ROBOVAC: 'gfx/robovac.png',
 } as const;
 
 //

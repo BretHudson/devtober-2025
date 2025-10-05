@@ -20,7 +20,7 @@ export const renderHealth = (ctx: Ctx, camera: Camera, entity: Actor) => {
 	}
 
 	const drawPos = new Vec2(entity.x, entity.y).sub(camera);
-	drawPos.y -= (entity.collider as BoxCollider).height / 2;
+	drawPos.y -= (entity.collider as BoxCollider).height / 2 + 10;
 
 	const size = 4;
 	const padding = 6;

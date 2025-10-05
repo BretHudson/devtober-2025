@@ -6,6 +6,7 @@ import { Vec2 } from 'canvas-lord/math';
 import type { Ctx } from 'canvas-lord/util/canvas';
 import { Draw } from 'canvas-lord/util/draw';
 import { Grid } from 'canvas-lord/util/grid';
+import { ENEMIES } from '~/data/enemies';
 import { allGunData } from '~/data/guns';
 import { Enemy } from '~/entities/enemy';
 import { Gun } from '~/entities/gun';
@@ -70,10 +71,18 @@ export class GameScene extends Scene {
 		this.addEntity(new Powerup(POWERUP.INVINCIBILITY, 0, quarterSize.y));
 		this.addEntity(new Powerup(POWERUP.SPEED_UP, 0, -quarterSize.y));
 
-		this.addEntity(new Enemy(quarterSize.x, quarterSize.y));
-		this.addEntity(new Enemy(quarterSize.x, -quarterSize.y));
-		this.addEntity(new Enemy(-quarterSize.x, -quarterSize.y));
-		this.addEntity(new Enemy(-quarterSize.x, quarterSize.y));
+		this.addEntity(
+			new Enemy(quarterSize.x, quarterSize.y, ENEMIES.ROBOVAC),
+		);
+		this.addEntity(
+			new Enemy(quarterSize.x, -quarterSize.y, ENEMIES.MOUSE_TRAP),
+		);
+		this.addEntity(
+			new Enemy(-quarterSize.x, -quarterSize.y, ENEMIES.MOUSE_TRAP),
+		);
+		this.addEntity(
+			new Enemy(-quarterSize.x, quarterSize.y, ENEMIES.ROBOVAC),
+		);
 
 		Object.values(allGunData).forEach((g, i, arr) => {
 			const x = positionItemInRow(i, arr.length, 16, 48);
