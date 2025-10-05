@@ -1,10 +1,11 @@
 import { Game } from 'canvas-lord/core/engine';
-import { allGunData } from './data/guns';
-import { GameScene } from './scenes/game-scene';
-import { assetManager, ASSETS } from './util/assets';
-import { FONTS } from './util/constants';
-import { ProjectileFlyweight, projectiles } from './data/projectiles';
-import { ENEMIES } from './data/enemies';
+import { ENEMIES } from '~/data/enemies';
+import { allGunData } from '~/data/guns';
+import { projectiles } from '~/data/projectiles';
+import { initDebug } from '~/debug';
+import { GameScene } from '~/scenes/game-scene';
+import { assetManager, ASSETS, settings, defaultSettings } from '~/util/assets';
+import { FONTS } from '~/util/constants';
 
 // load assets
 Object.values(ASSETS.GFX).forEach((asset) => {
@@ -81,11 +82,16 @@ assetManager.onLoad.add(() => {
 		fps: 60,
 		backgroundColor: '#323232',
 		assetManager,
+		// devMode: window.debugEnabled,
 		gameLoopSettings: {
 			updateMode: 'always',
 			renderMode: 'onUpdate',
 		},
 	});
+
+	if (window.debugEnabled) {
+		initDebug(game, settings, defaultSettings);
+	}
 
 	game.pushScene(new GameScene());
 

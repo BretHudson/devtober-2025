@@ -1,5 +1,6 @@
 import { Entity } from 'canvas-lord/core/entity';
 import type { GameScene } from '~/scenes/game-scene';
+import { onUpdateHandleShowHitbox } from '~/util/assets';
 
 export class BaseEntity extends Entity<GameScene> {
 	get player() {
@@ -8,6 +9,10 @@ export class BaseEntity extends Entity<GameScene> {
 
 	get isPlayerAlive() {
 		return this.scene.player.alive;
+	}
+
+	added(): void {
+		this.onUpdate.add(onUpdateHandleShowHitbox(this));
 	}
 
 	deltaToPlayer() {

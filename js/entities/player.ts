@@ -12,7 +12,7 @@ import { GunData } from '~/data/guns';
 import { Actor } from '~/entities/actor';
 import type { Gun } from '~/entities/gun';
 import { POWERUP, Powerup, PowerupData } from '~/entities/powerup';
-import { assetManager, ASSETS } from '~/util/assets';
+import { assetManager, ASSETS, settings } from '~/util/assets';
 import { COLLIDER_TAG, DEPTH } from '~/util/constants';
 import { Timer } from '~/util/timer';
 import { DamageInfo } from '~/util/types';
@@ -93,7 +93,10 @@ export class Player extends Actor {
 		const hInput = getAxis(input, leftKeys, rightKeys);
 		const vInput = getAxis(input, upKeys, downKeys);
 
-		const speed = this.speedUp ? 7.5 : 5;
+		let speed = settings.playerSpeed;
+		if (this.speedUp) {
+			speed *= settings.playerSpeedUp;
+		}
 		let vel = new Vec2(hInput, vInput);
 		if (vel.magnitude > 0) {
 			this.sinTimer += 1;
@@ -151,6 +154,7 @@ export class Player extends Actor {
 
 	takeDamage(damageInfo: DamageInfo): void {
 		if (this.invincible) return;
+		if (settings.invincible) return;
 		super.takeDamage(damageInfo);
 	}
 

@@ -59,7 +59,6 @@ export class Enemy extends Actor {
 		}
 		collider.tag = COLLIDER_TAG.ENEMY;
 		this.collider = collider;
-		this.colliderVisible = true;
 
 		if (type === ENEMIES.ROBOVAC) {
 			this.velocity = Enemy.robovacInitRandom.choose(directions).scale(3);

@@ -1,4 +1,4 @@
-import { AssetManager } from 'canvas-lord/canvas-lord';
+import { AssetManager, Entity } from 'canvas-lord/canvas-lord';
 
 const GFX = {
 	PLAYER: 'gfx/player.png',
@@ -39,3 +39,35 @@ export const ASSETS = {
 } as const;
 
 export const assetManager = new AssetManager('./assets/');
+
+export const defaultSettings = {
+	showHitboxes: false,
+	invincible: false,
+	seed: undefined as undefined | number,
+	playerSpeed: 5,
+	playerSpeedUp: 1.5,
+};
+
+export type Settings = typeof defaultSettings;
+let localStorageSettings = {};
+if (window.debugEnabled) {
+	localStorageSettings =
+		JSON.parse(localStorage.getItem('settings') ?? '{}') ?? {};
+}
+export const settings: Settings = Object.assign(
+	{},
+	defaultSettings,
+	localStorageSettings,
+);
+
+export const onUpdateHandleShowHitbox = (entity: Entity) => {
+	return () => (entity.colliderVisible = settings.showHitboxes);
+};
+
+// delete old keys
+Object.keys(settings).forEach((key) => {
+	if (!(key in defaultSettings)) {
+		// @ts-expect-error - old keys won't be on the type anymore
+		delete settings[key];
+	}
+});
