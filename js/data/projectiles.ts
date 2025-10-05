@@ -57,7 +57,6 @@ projectiles.set('rock', rock);
 const revolver = {
 	...defaults,
 	speed: 10,
-	speed: 2,
 	imageSrc: ASSETS.GFX.BULLET,
 	size: 16,
 	duration: 1,

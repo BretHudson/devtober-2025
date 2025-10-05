@@ -72,7 +72,7 @@ export class Enemy extends Actor {
 	update(): void {
 		super.update();
 
-		this.gunGfx?.update();
+		this.gun?.update();
 		const toPlayer = this.deltaToPlayer();
 		if (this.viewRadius) {
 			const canSeePlayer = toPlayer.magnitude < this.viewRadius;

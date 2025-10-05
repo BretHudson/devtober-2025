@@ -129,7 +129,7 @@ export class Player extends Actor {
 
 		super.update();
 
-		this.gunGfx?.update();
+		this.gun?.update();
 		if (input.mouseCheck()) {
 			this.shoot(this.aimDir);
 		}

@@ -27,7 +27,7 @@ export class Projectile extends BaseEntity {
 	}
 
 	constructor(owner: Actor, dir: Vec2, typeName: ProjectileType) {
-		const pos = owner.pos.add(owner.gunGfx!.shootPos);
+		const pos = owner.pos.add(owner.gun!.shootPos);
 		super(pos.x, pos.y);
 
 		const type = projectiles.get(typeName);

@@ -10,7 +10,7 @@ import { healthComponent, renderHealth } from '~/components/health';
 import { GunData } from '~/data/guns';
 import { BaseEntity } from '~/entities/base-entity';
 import { Projectile } from '~/entities/projectile';
-import { GunGraphic } from '~/graphic/GunGraphic';
+import { GunComponent } from '~/graphic/GunGraphic';
 import { assetManager, ASSETS } from '~/util/assets';
 import { COLLIDER_TAG } from '~/util/constants';
 import { randomSpreadAngle } from '~/util/random';
@@ -27,8 +27,7 @@ export class Actor extends BaseEntity {
 
 	hitStunTimer = new Timer(100);
 
-	gun?: GunData;
-	gunGfx?: GunGraphic;
+	gun?: GunComponent;
 
 	fractVel = new Vec2();
 	velocity = new Vec2();
@@ -66,16 +65,20 @@ export class Actor extends BaseEntity {
 		});
 	}
 
-	switchGun(gun?: GunData) {
-		this.gun = gun;
-		if (gun) {
-			if (!this.gunGfx) {
-				this.gunGfx = new GunGraphic(gun);
-				this.addGraphic(this.gunGfx);
-			}
-			this.cooldown.earlyFinish();
+	switchGun(gunData?: GunData) {
+		if (!this.gun && gunData) {
+			this.gun = new GunComponent(gunData, this);
+			this.addGraphic(this.gun.sprite);
 		}
-		this.gunGfx?.setGun(gun);
+
+		// if (gunData) {
+		// 	if (!this.gunGfx) {
+		// 		this.gunGfx = new GunGraphic(gunData);
+		// 		this.addGraphic(this.gunGfx);
+		// 	}
+		// 	this.cooldown.earlyFinish();
+		// }
+		this.gun?.setGun(gunData);
 	}
 
 	preUpdate(): void {
@@ -157,21 +160,23 @@ export class Actor extends BaseEntity {
 
 		if (this.cooldown.running) return;
 
-		const angleOffset = randomSpreadAngle(this.gun.spreadAngle);
+		const angleOffset = randomSpreadAngle(this.gun.data.spreadAngle);
 		const dir = target.rotate(degToRad(angleOffset));
 
-		this.scene.addEntity(new Projectile(this, dir, this.gun.projectile));
+		this.scene.addEntity(
+			new Projectile(this, dir, this.gun.data.projectile),
+		);
 
-		Sfx.play(this.gun.audio, 0.2, 0.2);
+		Sfx.play(this.gun.data.audio, 0.2, 0.2);
 
-		this.cooldown.reset(this.gun.cooldown);
+		this.cooldown.reset(this.gun.data.cooldown);
 	}
 
 	render(ctx: Ctx, camera: Camera): void {
 		if (this.renderHealth) renderHealth(ctx, camera, this);
 
 		// TODO(bret): remove this debug stuff
-		if ((true as boolean) && this.gunGfx) {
+		if ((true as boolean) && this.gun) {
 			Draw.circle(
 				ctx,
 				{
@@ -180,8 +185,8 @@ export class Actor extends BaseEntity {
 					originX: 3,
 					originY: 3,
 				},
-				this.x + this.gunGfx.shootPos.x - camera.x,
-				this.y + this.gunGfx.shootPos.y - camera.y,
+				this.x + this.gun.shootPos.x - camera.x,
+				this.y + this.gun.shootPos.y - camera.y,
 				3,
 			);
 		}
