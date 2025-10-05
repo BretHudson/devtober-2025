@@ -38,8 +38,13 @@ const defaults: ProjectileFlyweight = {
 	rotate: 0,
 };
 
-const basic = { ...defaults, speed: 3, color: 'white' };
+const basic = {
+	...defaults,
+	speed: 3,
+	color: 'white',
+};
 projectiles.set('basic', basic);
+
 const rock = {
 	...defaults,
 	speed: 3,
@@ -48,11 +53,29 @@ const rock = {
 	rotate: 3,
 };
 projectiles.set('rock', rock);
-const revolver = { ...defaults, speed: 6, color: 'black', duration: 3 };
+
+const revolver = {
+	...defaults,
+	speed: 10,
+	imageSrc: ASSETS.GFX.BULLET,
+	size: 16,
+	duration: 1,
+};
 projectiles.set('revolver', revolver);
-const machineGun = { ...defaults, speed: 10, color: 'pink' };
+
+const machineGun = {
+	...defaults,
+	speed: 10,
+	color: 'pink',
+};
 projectiles.set('machine-gun', machineGun);
-const rifle = { ...defaults, speed: 20, color: 'pink', damage: 3 };
+
+const rifle = {
+	...defaults,
+	speed: 20,
+	color: 'pink',
+	damage: 3,
+};
 projectiles.set('rifle', rifle);
 
 for (let type of Object.values(types)) {

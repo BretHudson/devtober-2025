@@ -28,8 +28,7 @@ const createEnemy = (
 };
 
 const mouseTrap = createEnemy('mouseTrap', ASSETS.GFX.MOUSE_TRAP_2, [48, 72]);
-// const robovac = createEnemy('robovac', ASSETS.GFX.ROBOVAC, [200, 100]);
-const robovac = createEnemy('robovac', ASSETS.GFX.ROBOVAC, 100);
+const robovac = createEnemy('robovac', ASSETS.GFX.ROBOVAC, [200, 120]);
 
 export const ENEMIES = {
 	MOUSE_TRAP: mouseTrap,

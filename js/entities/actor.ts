@@ -30,6 +30,9 @@ export class Actor extends BaseEntity {
 	gun?: GunData;
 	gunGfx?: GunGraphic;
 
+	fractVel = new Vec2();
+	velocity = new Vec2();
+
 	get sprite() {
 		return this.graphic as Sprite;
 	}
@@ -82,6 +85,35 @@ export class Actor extends BaseEntity {
 
 	update(_input?: Input) {
 		const { x, y } = this;
+
+		this.fractVel = this.fractVel.add(this.velocity);
+		const whole = new Vec2(
+			Math.trunc(this.fractVel.x),
+			Math.trunc(this.fractVel.y),
+		);
+		this.fractVel = this.fractVel.sub(whole);
+
+		const xDir = Math.sign(whole.x);
+		for (let i = 0; i < Math.abs(whole.x); ++i) {
+			if (this.collide(this.x + xDir, this.y, COLLIDER_TAG.WALL)) {
+				this.velocity.x = 0;
+				this.fractVel.x = 0;
+				break;
+			} else {
+				this.x += xDir;
+			}
+		}
+
+		const yDir = Math.sign(whole.y);
+		for (let i = 0; i < Math.abs(whole.y); ++i) {
+			if (this.collide(this.x, this.y + yDir, COLLIDER_TAG.WALL)) {
+				this.velocity.y = 0;
+				this.fractVel.y = 0;
+				break;
+			} else {
+				this.y += yDir;
+			}
+		}
 
 		const bullet = this.collideEntity<Projectile>(x, y, this.hurtBy);
 		if (bullet) {

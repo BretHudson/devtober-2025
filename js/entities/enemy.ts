@@ -1,22 +1,30 @@
 import { BoxCollider, CircleCollider, Collider } from 'canvas-lord/collider';
 import { Sprite } from 'canvas-lord/graphic';
 import { Vec2 } from 'canvas-lord/math';
+import { degToRad } from 'canvas-lord/math/misc';
 import type { Camera } from 'canvas-lord/util/camera';
 import type { Ctx } from 'canvas-lord/util/canvas';
 import { Draw } from 'canvas-lord/util/draw';
 import { Random } from 'canvas-lord/util/random';
 import { healthComponent } from '~/components/health';
-import type { EnemyFlyweight } from '~/data/enemies';
+import { ENEMIES, type EnemyFlyweight } from '~/data/enemies';
 import { Actor } from '~/entities/actor';
 import { Powerup, POWERUP } from '~/entities/powerup';
 import { assetManager, ASSETS } from '~/util/assets';
 import { COLLIDER_TAG } from '~/util/constants';
 import { SEEDS } from '~/util/random';
 
-const viewRadius = 100 * 2;
+const directions = [
+	Vec2.right,
+	Vec2.right.scale(-1),
+	Vec2.up,
+	Vec2.up.scale(-1),
+];
 
 export class Enemy extends Actor {
 	static dropRandom = new Random(SEEDS.ENEMY_DROP);
+	static robovacInitRandom = new Random(SEEDS.ROBOVAC_INIT);
+	random = new Random(Enemy.robovacInitRandom.int(9999));
 
 	type: EnemyFlyweight;
 
@@ -53,6 +61,10 @@ export class Enemy extends Actor {
 		this.collider = collider;
 		this.colliderVisible = true;
 
+		if (type === ENEMIES.ROBOVAC) {
+			this.velocity = Enemy.robovacInitRandom.choose(directions).scale(3);
+		}
+
 		this.type = type;
 
 		this.addComponent(healthComponent);
@@ -69,6 +81,21 @@ export class Enemy extends Actor {
 				this.aimDir = toPlayer;
 				this.shoot(toPlayer);
 			}
+		}
+
+		if (
+			this.collide(this.x + this.velocity.x, this.y + this.velocity.y, [
+				COLLIDER_TAG.PLAYER,
+				COLLIDER_TAG.WALL,
+				COLLIDER_TAG.ENEMY,
+			])
+		) {
+			const mag = this.velocity.magnitude;
+			this.velocity = this.velocity.rotate(degToRad(90));
+			this.velocity.normalize();
+			this.velocity.x = Math.round(this.velocity.x);
+			this.velocity.y = Math.round(this.velocity.y);
+			this.velocity = this.velocity.scale(mag);
 		}
 	}
 

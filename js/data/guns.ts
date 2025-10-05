@@ -49,6 +49,7 @@ export const allGunData = {
 		color: 'pink',
 		cooldown: 20,
 		spreadAngle: 4,
+		projectile: 'revolver',
 		origin: new Vec2(38, -10),
 		armLength: 20,
 	} as GunData,

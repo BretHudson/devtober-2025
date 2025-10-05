@@ -100,30 +100,8 @@ export class Player extends Actor {
 
 			vel.normalize();
 			vel = vel.scale(speed);
-
-			this.x += vel.x;
-			this.y += vel.y;
 		}
-
-		// for now, do the hacky dumb thing
-		if (this.scene.bounds) {
-			const offset = new Vec2(
-				this.collider.width,
-				this.collider.height,
-			).invScale(2);
-			offset.x += 32;
-			offset.y += 32;
-			this.x = Math.clamp(
-				this.x,
-				this.scene.bounds[0] + offset.x,
-				this.scene.bounds[2] - offset.y,
-			);
-			this.y = Math.clamp(
-				this.y,
-				this.scene.bounds[1] + offset.x,
-				this.scene.bounds[3] - offset.y,
-			);
-		}
+		this.velocity = vel;
 
 		this.aimDir = this.scene.mouse.sub(this.pos);
 

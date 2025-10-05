@@ -1,6 +1,7 @@
 import { CircleCollider } from 'canvas-lord/collider';
 import { Sprite } from 'canvas-lord/graphic';
 import type { Vec2 } from 'canvas-lord/math';
+import { radToDeg } from 'canvas-lord/math/misc';
 import {
 	ProjectileFlyweight,
 	ProjectileType,
@@ -19,6 +20,7 @@ export class Projectile extends BaseEntity {
 	type: ProjectileFlyweight;
 
 	imageAngle = 0;
+	startAngle = 0;
 
 	get sprite() {
 		return this.graphic as Sprite;
@@ -47,6 +49,7 @@ export class Projectile extends BaseEntity {
 			sprite = Sprite.createCircle(type.size, type.color);
 		}
 		sprite.centerOO();
+		this.startAngle = radToDeg(Math.atan2(dir.y, dir.x));
 		this.graphic = sprite;
 
 		this.owner = owner;
@@ -78,7 +81,8 @@ export class Projectile extends BaseEntity {
 		this.imageAngle += this.type.rotate;
 		let segments = 10;
 		let span = 360 / segments;
-		this.sprite.angle = Math.floor(this.imageAngle / span) * span;
+		this.sprite.angle =
+			this.startAngle + Math.floor(this.imageAngle / span) * span;
 	}
 
 	hitActor(): void {
