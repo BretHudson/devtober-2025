@@ -16,6 +16,7 @@ import { assetManager, ASSETS, settings } from '~/util/assets';
 import { COLLIDER_TAG, DEPTH } from '~/util/constants';
 import { Timer } from '~/util/timer';
 import { DamageInfo } from '~/util/types';
+import { BaseEntity } from './base-entity';
 
 function getAxis(input: Input, neg: Key[], pos: Key[]) {
 	return +input.keyCheck(pos) - +input.keyCheck(neg);
@@ -34,6 +35,8 @@ interface StatusEffect {
 export class Player extends Actor {
 	statuses: StatusEffect[] = [];
 	timers: Timer[] = [];
+
+	hitTimer = new Timer();
 
 	speedUp = false;
 	invincible = false;
@@ -105,50 +108,58 @@ export class Player extends Actor {
 	}
 
 	update(input: Input): void {
-		const hInput = getAxis(input, leftKeys, rightKeys);
-		const vInput = getAxis(input, upKeys, downKeys);
-
-		let speed = settings.playerSpeed;
-		if (this.speedUp) {
-			speed *= settings.playerSpeedUp;
+		if (this.hitTimer.running) {
+			this.velocity = this.velocity.scale(0.5);
 		}
-		let vel = new Vec2(hInput, vInput);
-		if (vel.magnitude > 0) {
-			this.sinTimer += 1;
 
-			vel.normalize();
-			vel = vel.scale(speed);
-		}
-		this.velocity = vel;
+		if (!this.hitTimer.running) {
+			const hInput = getAxis(input, leftKeys, rightKeys);
+			const vInput = getAxis(input, upKeys, downKeys);
 
-		this.aimDir = this.scene.mouse.sub(this.pos);
+			let speed = settings.playerSpeed;
+			if (this.speedUp) {
+				speed *= settings.playerSpeedUp;
+			}
+			let vel = new Vec2(hInput, vInput);
+			if (vel.magnitude > 0) {
+				this.sinTimer += 1;
 
-		const gunEntity = this.collideEntity<Gun>(
-			this.x,
-			this.y,
-			COLLIDER_TAG.GUN,
-		);
-		if (gunEntity && input.keyPressed(Keys.E)) {
-			const asset = assetManager.audio.get(
-				ASSETS.SFX.PICKUPS.PICK_UP_WEAPON,
+				vel.normalize();
+				vel = vel.scale(speed);
+			}
+			this.velocity = vel;
+
+			this.aimDir = this.scene.mouse.sub(this.pos);
+
+			const gunEntity = this.collideEntity<Gun>(
+				this.x,
+				this.y,
+				COLLIDER_TAG.GUN,
 			);
-			if (!asset) throw new Error();
-			Sfx.play(asset, 0.5, 0.2);
-			this.switchGun(gunEntity.gunData);
-		}
+			if (gunEntity && input.keyPressed(Keys.E)) {
+				const asset = assetManager.audio.get(
+					ASSETS.SFX.PICKUPS.PICK_UP_WEAPON,
+				);
+				if (!asset) throw new Error();
+				Sfx.play(asset, 0.5, 0.2);
+				this.switchGun(gunEntity.gunData);
+			}
 
-		const powerup = this.collideEntity<Powerup>(
-			this.x,
-			this.y,
-			COLLIDER_TAG.POWERUP,
-		);
-		if (powerup) this.processPowerup(powerup);
+			const powerup = this.collideEntity<Powerup>(
+				this.x,
+				this.y,
+				COLLIDER_TAG.POWERUP,
+			);
+			if (powerup) this.processPowerup(powerup);
+		}
 
 		super.update();
 
-		this.gun?.update();
-		if (input.mouseCheck()) {
-			this.shoot(this.aimDir);
+		if (!this.hitTimer.running) {
+			this.gun?.update();
+			if (input.mouseCheck()) {
+				this.shoot(this.aimDir);
+			}
 		}
 	}
 
@@ -169,10 +180,17 @@ export class Player extends Actor {
 		this.sprite.angle = Math.trunc(Math.sin(this.sinTimer / 12) * 1.4) * 5;
 	}
 
-	takeDamage(damageInfo: DamageInfo): void {
+	takeDamage(damageInfo: DamageInfo, other: BaseEntity): void {
 		if (this.invincible) return;
 		if (settings.invincible) return;
-		super.takeDamage(damageInfo);
+		super.takeDamage(damageInfo, other);
+
+		const delta = other.pos.sub(this.pos);
+		delta.normalize();
+		this.velocity = delta.scale(-48);
+
+		this.hitTimer.reset(10);
+		this.addTimer(this.hitTimer);
 	}
 
 	die(): void {

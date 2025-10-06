@@ -9,6 +9,7 @@ import { Draw } from 'canvas-lord/util/draw';
 import { Grid } from 'canvas-lord/util/grid';
 import { ENEMIES } from '~/data/enemies';
 import { allGunData } from '~/data/guns';
+import { MouseTrap } from '~/entities/enemies/mouse-trap';
 import { Enemy } from '~/entities/enemy';
 import { Gun } from '~/entities/gun';
 import { Player } from '~/entities/player';
@@ -128,7 +129,7 @@ export class GameScene extends Scene {
 					break;
 
 				case 'MouseTrap':
-					this.addEntity(new Enemy(x, y, ENEMIES.MOUSE_TRAP));
+					this.addEntity(new MouseTrap(x, y));
 					break;
 
 				case 'Robovac':

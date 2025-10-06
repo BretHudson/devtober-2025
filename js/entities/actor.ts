@@ -114,11 +114,11 @@ export class Actor extends BaseEntity {
 		const bullet = this.collideEntity<Projectile>(x, y, this.hurtBy);
 		if (bullet) {
 			bullet.hitActor();
-			this.takeDamage(bullet.type);
+			this.takeDamage(bullet.type, bullet);
 		}
 	}
 
-	takeDamage(damageInfo: DamageInfo) {
+	takeDamage(damageInfo: DamageInfo, other: BaseEntity) {
 		const health = this.component(healthComponent)!;
 		health.cur -= damageInfo.damage;
 
