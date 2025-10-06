@@ -1,4 +1,5 @@
 import { Game } from 'canvas-lord/core/engine';
+import { Text } from 'canvas-lord/graphic';
 import { ENEMIES } from '~/data/enemies';
 import { allGunData } from '~/data/guns';
 import { projectiles } from '~/data/projectiles';
@@ -25,12 +26,17 @@ registerAsset(ASSETS.GFX, (src) => assetManager.addImage(src));
 registerAsset(ASSETS.SFX, (src) => assetManager.addAudio(src));
 
 const loadFont = async (name: string, fileName: string) => {
-	const font = new FontFace(name, `url("${fileName}")`);
+	const font = new FontFace(name, `url("./assets/${fileName}")`);
 	await font.load();
 	// @ts-ignore - this is valid despite TS saying it's not
 	document.fonts.add(font);
 };
-await loadFont(FONTS.SKULLBOY, './assets/fonts/ChevyRay - Skullboy.ttf');
+await loadFont(FONTS.SKULLBOY, ASSETS.FONTS.CHEVYRAY_SKULLBOY);
+
+Text.updateDefaultOptions({
+	font: FONTS.SKULLBOY,
+	size: 24,
+});
 
 let game;
 assetManager.onLoad.add(() => {
