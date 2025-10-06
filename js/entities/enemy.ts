@@ -32,6 +32,13 @@ export class Enemy extends Actor {
 		return this.type.viewRadius;
 	}
 
+	get ammo() {
+		return 999;
+	}
+	set ammo(_: number) {
+		// purposefully not set
+	}
+
 	constructor(x: number, y: number, type: EnemyFlyweight) {
 		super(x, y, COLLIDER_TAG.PROJECTILE);
 

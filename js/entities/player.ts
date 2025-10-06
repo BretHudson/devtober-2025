@@ -48,6 +48,17 @@ export class Player extends Actor {
 		super.collider = collider;
 	}
 
+	get inventory() {
+		return this.scene.inventory;
+	}
+
+	get ammo() {
+		return this.inventory.items.ammo.quantity;
+	}
+	set ammo(value: number) {
+		this.inventory.items.ammo.quantity = value;
+	}
+
 	constructor(x: number, y: number, gun?: GunData) {
 		super(x, y, COLLIDER_TAG.ENEMY_PROJECTILE, gun);
 

@@ -107,7 +107,7 @@ export class HUD extends BaseEntity {
 	}
 
 	updateAmmo() {
-		const { ammo, maxAmmo, gun } = this.player;
+		const { ammo, gun } = this.player;
 		const fuck = [
 			//
 			'Ammo:',

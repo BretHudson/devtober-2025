@@ -17,10 +17,33 @@ import { renderPattern } from '~/util/background-pattern';
 import { COLLIDER_TAG, FONTS } from '~/util/constants';
 import { positionItemInRow } from '~/util/math';
 
+const types = [
+	//
+	['ammo', 99],
+] as const;
+type InventoryItemType = (typeof types)[number][0];
+interface ItemData {
+	quantity: number;
+	max: number;
+}
+
+class Inventory {
+	items: Record<InventoryItemType, ItemData>;
+
+	constructor() {
+		this.items = types.reduce(
+			(map, [k, max]) => ((map[k] = { quantity: 0, max }), map),
+			{} as typeof this.items,
+		);
+	}
+}
+
 export class GameScene extends Scene {
 	// @ts-expect-error - this gets assigned, dw
 	player: Player;
 	cameraTarget: Entity | null = null;
+
+	inventory = new Inventory();
 
 	constructor() {
 		super();

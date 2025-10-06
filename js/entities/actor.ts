@@ -29,8 +29,12 @@ export class Actor extends BaseEntity {
 	fractVel = new Vec2();
 	velocity = new Vec2();
 
-	ammo: number = 20;
-	maxAmmo: number = 50;
+	get ammo(): number {
+		throw new Error('ammo getter must be set in child class');
+	}
+	set ammo(_: number) {
+		throw new Error('ammo setter must be set in child class');
+	}
 
 	get sprite() {
 		return this.graphic as Sprite;
