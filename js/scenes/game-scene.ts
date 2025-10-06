@@ -16,6 +16,7 @@ import { HUD } from '~/entities/ui/hud';
 import { renderPattern } from '~/util/background-pattern';
 import { COLLIDER_TAG, FONTS } from '~/util/constants';
 import { positionItemInRow } from '~/util/math';
+import { LDtk } from '~/util/types';
 
 const types = [
 	//
@@ -39,31 +40,37 @@ class Inventory {
 }
 
 export class GameScene extends Scene {
-	// @ts-expect-error - this gets assigned, dw
-	player: Player;
+	player!: Player;
 	cameraTarget: Entity | null = null;
 
 	inventory = new Inventory();
 
-	constructor() {
+	ldtkData: LDtk.Data;
+
+	constructor(ldtkData: LDtk.Data) {
 		super();
 
+		this.ldtkData = ldtkData;
+		const [level] = ldtkData.levels;
+		if (!level) throw new Error('no levels found');
+
+		const { pxWid, pxHei } = level;
+		const layers = level.layerInstances;
+		const gridLayer = layers.find((layer) => layer.__type === 'IntGrid');
+		if (!gridLayer) throw new Error('Missing IntGrid layer');
+
 		const SIZE = 32;
-		const col = 50;
-		const row = 40;
-		this.bounds = [-col, -row, col, row].map(
-			(v) => (v * SIZE) / 2,
+		this.bounds = [-pxWid, -pxHei, pxWid, pxHei].map(
+			(v) => v / 2,
 		) as Exclude<typeof this.bounds, null>;
 
-		const grid = new Grid(col * SIZE, row * SIZE, SIZE, SIZE);
-		for (let x = 0; x < col; ++x) {
-			grid.setTile(x, 0, 1);
-			grid.setTile(x, row - 1, 1);
-		}
-		for (let y = 0; y < row; ++y) {
-			grid.setTile(0, y, 1);
-			grid.setTile(col - 1, y, 1);
-		}
+		const grid = Grid.fromArray(
+			gridLayer.intGridCsv,
+			pxWid,
+			pxHei,
+			SIZE,
+			SIZE,
+		);
 		const walls = new Entity();
 
 		const wallCollider = new GridCollider(
@@ -75,15 +82,12 @@ export class GameScene extends Scene {
 		walls.collider = wallCollider;
 		walls.colliderVisible = true;
 		this.addEntity(walls);
+
+		grid.renderMode = Grid.RenderMode.BOXES;
 	}
 
 	begin(): void {
-		const quarterSize = new Vec2(
-			this.engine.width,
-			this.engine.height,
-		).invScale(4);
-
-		const { enemyGun, revolver, rock } = allGunData;
+		const { revolver } = allGunData;
 
 		this.addEntity(new HUD());
 
@@ -91,35 +95,60 @@ export class GameScene extends Scene {
 		this.addEntity(this.player);
 		this.follow(this.player);
 
-		this.addEntity(new Powerup(POWERUP.INVINCIBILITY, 0, quarterSize.y));
-		this.addEntity(new Powerup(POWERUP.SPEED_UP, 0, -quarterSize.y));
-
-		this.addEntity(
-			new Enemy(quarterSize.x, quarterSize.y, ENEMIES.ROBOVAC),
-		);
-		this.addEntity(
-			new Enemy(quarterSize.x, -quarterSize.y, ENEMIES.MOUSE_TRAP),
-		);
-		this.addEntity(
-			new Enemy(-quarterSize.x, -quarterSize.y, ENEMIES.MOUSE_TRAP),
-		);
-		this.addEntity(
-			new Enemy(-quarterSize.x, quarterSize.y, ENEMIES.ROBOVAC),
-		);
-
-		Object.values(allGunData).forEach((g, i, arr) => {
-			const x = positionItemInRow(i, arr.length, 16, 48);
-			const y = quarterSize.y * 2 + (i % 2 ? 64 : 0);
-			this.addEntity(new Gun(g, x, y));
-		});
-
-		const ammoPickups = 20;
-		for (let i = 0; i < ammoPickups; ++i) {
-			const x = positionItemInRow(i, ammoPickups, 16, 32);
-			this.addEntity(new Powerup(POWERUP.AMMO, x, quarterSize.y * 3));
-		}
-
 		this.onRender.add(renderPattern(this));
+
+		const [level] = this.ldtkData.levels;
+		const layers = level.layerInstances;
+		const entitiesLayer = layers.find(
+			(layer) => layer.__type === 'Entities',
+		);
+		if (!entitiesLayer) throw new Error('Missing Entities layer');
+
+		entitiesLayer.entityInstances.forEach((entity) => {
+			let [x, y] = entity.px;
+			x -= this.bounds![2];
+			y -= this.bounds![3];
+
+			switch (entity.__identifier) {
+				case 'Player':
+					break;
+
+				case 'MouseTrap':
+					this.addEntity(new Enemy(x, y, ENEMIES.MOUSE_TRAP));
+					break;
+
+				case 'Robovac':
+					this.addEntity(new Enemy(x, y, ENEMIES.ROBOVAC));
+					break;
+
+				case 'Gun': {
+					let value = entity.fieldInstances.find(
+						(field) => field.__identifier === 'Type',
+					)!.__value;
+					value =
+						value.substring(0, 1).toLowerCase() +
+						value.substring(1);
+					const type = allGunData[value as keyof typeof allGunData];
+					this.addEntity(new Gun(type, x, y));
+					break;
+				}
+
+				case 'Powerup': {
+					const typeField = entity.fieldInstances.find(
+						(field) => field.__identifier === 'Type',
+					)!;
+					const type =
+						POWERUP[typeField.__value as keyof typeof POWERUP];
+					this.addEntity(new Powerup(type, x, y));
+					break;
+				}
+
+				default:
+					console.warn(
+						`Entity "${entity.__identifier}" not yet supported`,
+					);
+			}
+		});
 
 		this.updateCamera();
 	}
@@ -127,7 +156,7 @@ export class GameScene extends Scene {
 	update(input: Input): void {
 		if (this.player.dead && input.keyPressed(Keys.R)) {
 			this.engine.popScenes();
-			this.engine.pushScene(new GameScene());
+			this.engine.pushScene(new GameScene(this.ldtkData));
 		}
 	}
 

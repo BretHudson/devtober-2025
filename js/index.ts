@@ -5,8 +5,9 @@ import { allGunData } from '~/data/guns';
 import { projectiles } from '~/data/projectiles';
 import { initDebug } from '~/debug';
 import { GameScene } from '~/scenes/game-scene';
-import { assetManager, ASSETS, settings, defaultSettings } from '~/util/assets';
+import { assetManager, ASSETS, defaultSettings, settings } from '~/util/assets';
 import { FONTS } from '~/util/constants';
+import type { LDtk } from './util/types';
 
 // load assets
 type PossibleAsset = string | Record<string, any>;
@@ -32,6 +33,10 @@ const loadFont = async (name: string, fileName: string) => {
 	document.fonts.add(font);
 };
 await loadFont(FONTS.SKULLBOY, ASSETS.FONTS.CHEVYRAY_SKULLBOY);
+
+// levels
+const levelFile = 'assets/devtober-2025.ldtk';
+const ldtkData: LDtk.Data = await fetch(levelFile).then((res) => res.json());
 
 Text.updateDefaultOptions({
 	font: FONTS.SKULLBOY,
@@ -108,7 +113,7 @@ assetManager.onLoad.add(() => {
 		initDebug(game, settings, defaultSettings);
 	}
 
-	game.pushScene(new GameScene());
+	game.pushScene(new GameScene(ldtkData));
 
 	game.start();
 });
