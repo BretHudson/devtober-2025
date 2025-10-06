@@ -11,6 +11,8 @@ export const COLLIDER_TAG = {
 } as const;
 
 export const DEPTH = {
+	FLOOR: 100,
+
 	DEFAULT: 0,
 	PLAYER: -1,
 

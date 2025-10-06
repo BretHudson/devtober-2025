@@ -1,8 +1,10 @@
 export const RAW_ASSET_DATA = {
+	DEVTOBER_2025: 'devtober-2025.ldtk',
 	FONTS: {
 		CHEVYRAY_SKULLBOY: 'fonts/ChevyRay - Skullboy.ttf',
 	},
 	GFX: {
+		CARPET: 'gfx/carpet.jpg',
 		CHARACTERS: {
 			ENEMY: 'gfx/characters/enemy.png',
 			MOUSE_TRAP_2: 'gfx/characters/mouse-trap-2.png',

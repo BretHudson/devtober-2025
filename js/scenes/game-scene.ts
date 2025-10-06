@@ -2,6 +2,7 @@ import { GridCollider } from 'canvas-lord/collider';
 import { Entity } from 'canvas-lord/core/entity';
 import { Input, Keys } from 'canvas-lord/core/input';
 import { Scene } from 'canvas-lord/core/scene';
+import { Sprite, TiledSprite } from 'canvas-lord/graphic';
 import { Vec2 } from 'canvas-lord/math';
 import type { Ctx } from 'canvas-lord/util/canvas';
 import { Draw } from 'canvas-lord/util/draw';
@@ -13,9 +14,9 @@ import { Gun } from '~/entities/gun';
 import { Player } from '~/entities/player';
 import { POWERUP, Powerup } from '~/entities/powerup';
 import { HUD } from '~/entities/ui/hud';
+import { assetManager, ASSETS } from '~/util/assets';
 import { renderPattern } from '~/util/background-pattern';
-import { COLLIDER_TAG, FONTS } from '~/util/constants';
-import { positionItemInRow } from '~/util/math';
+import { COLLIDER_TAG, DEPTH, FONTS } from '~/util/constants';
 import { LDtk } from '~/util/types';
 
 const types = [
@@ -49,6 +50,9 @@ export class GameScene extends Scene {
 
 	constructor(ldtkData: LDtk.Data) {
 		super();
+
+		const asset = assetManager.sprites.get(ASSETS.GFX.CARPET)!;
+		this.addGraphic(new TiledSprite(asset)).depth = DEPTH.FLOOR;
 
 		this.ldtkData = ldtkData;
 		const [level] = ldtkData.levels;
@@ -162,6 +166,13 @@ export class GameScene extends Scene {
 
 	postUpdate(): void {
 		this.updateCamera();
+	}
+
+	// NOTE(bret): please don't do this folks
+	renderInternal(ctx: Ctx) {
+		// draw the carpet
+
+		super.renderInternal(ctx);
 	}
 
 	render(ctx: Ctx): void {

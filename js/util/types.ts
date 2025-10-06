@@ -19,16 +19,16 @@ export namespace LDtk {
 		params: string[];
 	}
 
-	interface Field {
+	interface FieldInstance {
 		__identifier: string;
 		__type: string;
 		__value: string;
 		realEditorValues: EditorValue[];
 	}
 
-	interface Entity {
+	interface EntityInstance {
 		__identifier: string;
-		fieldInstances: Field[];
+		fieldInstances: FieldInstance[];
 		width: number;
 		height: number;
 		px: [number, number];
@@ -36,20 +36,113 @@ export namespace LDtk {
 		__pivot: [number, number];
 	}
 
-	interface Layer {
+	interface LayerInstance {
 		__identifier: string;
 		__type: 'Entities' | 'IntGrid';
 		intGridCsv: number[];
-		entityInstances: Entity[];
+		entityInstances: EntityInstance[];
 	}
 
 	export interface Level {
 		pxWid: number;
 		pxHei: number;
-		layerInstances: Layer[];
+		layerInstances: LayerInstance[];
+	}
+
+	export interface Entity {
+		identifier: string;
+		uid: number;
+		tags: string[];
+		allowOutOfBounds: false;
+		width: number;
+		height: number;
+		maxCount: number;
+	}
+
+	export interface EnumValue {
+		id: string;
+		tileRect: null;
+		color: number;
+	}
+
+	export interface Enum {
+		identifier: string;
+		uid: number;
+		values: EnumValue[];
+		iconTilesetUid: null;
+		externalRelPath: null;
+		externalFileChecksum: null;
+		tags: string[];
+	}
+
+	export interface Layer {
+		__type: string;
+		identifier: string;
+		type: string;
+		uid: number;
+		doc: null;
+		uiColor: number | null;
+		gridSize: number;
+		guideGridWid: number;
+		guideGridHei: number;
+		displayOpacity: number;
+		inactiveOpacity: number;
+		hideInList: boolean;
+		hideFieldsWhenInactive: boolean;
+		canSelectWhenInactive: boolean;
+		renderInWorldView: boolean;
+		pxOffsetX: number;
+		pxOffsetY: number;
+		parallaxFactorX: number;
+		parallaxFactorY: number;
+		parallaxScaling: boolean;
+		requiredTags: [];
+		excludedTags: [];
+		autoTilesKilledByOtherLayerUid: null;
+		uiFilterTags: [];
+		useAsyncRender: boolean;
+		intGridValues: [];
+		intGridValuesGroups: [];
+		autoRuleGroups: [];
+		autoSourceLayerDefUid: null;
+		tilesetDefUid: null;
+		tilePivotX: number;
+		tilePivotY: number;
+		biomeFieldUid: null;
+	}
+
+	export interface Tileset {
+		__cWid: number;
+		__cHei: number;
+		identifier: string;
+		uid: number;
+		relPath: string;
+		embedAtlas: null;
+		pxWid: number;
+		pxHei: number;
+		tileGridSize: number;
+		spacing: number;
+		padding: number;
+		tags: [];
+		tagsSourceEnumUid: null;
+		enumTags: [];
+		customData: [];
+		savedSelections: [];
+		cachedPixelData: {
+			opaqueTiles: string;
+			averageColors: string;
+		};
 	}
 
 	export interface Data {
 		levels: Level[];
+		defs: {
+			entities: Entity[];
+			enums: Enum[];
+			// externalEnums: any[];
+			layers: Layer[];
+			// levelFields: any[];
+			tilesets: Tileset[];
+		};
 	}
 }
