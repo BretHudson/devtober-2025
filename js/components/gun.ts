@@ -41,6 +41,11 @@ export class GunComponent {
 		});
 	}
 
+	pickup(owner: Actor) {
+		this.owner = owner;
+		this.owner.addGraphic(this.sprite);
+	}
+
 	drop() {
 		this.owner.removeGraphic(this.sprite);
 		this.cooldown.stop();

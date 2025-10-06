@@ -21,6 +21,7 @@ export class HUD extends BaseEntity {
 	statusSprites: Sprite[] = [];
 
 	ammoText: Text;
+	rocksText: Text;
 
 	constructor() {
 		super();
@@ -36,6 +37,11 @@ export class HUD extends BaseEntity {
 		ammoText.scrollX = 0;
 		ammoText.scrollY = 0;
 		this.ammoText = ammoText;
+
+		const rocksText = this.addGraphic(new Text('ROCKS', 10, 50 + 30));
+		rocksText.scrollX = 0;
+		rocksText.scrollY = 0;
+		this.rocksText = rocksText;
 	}
 
 	addHealthSprite(index: number) {
@@ -74,6 +80,7 @@ export class HUD extends BaseEntity {
 		this.updateHealth();
 		this.updateStatuses();
 		this.updateAmmo();
+		this.updateRocks();
 	}
 
 	updateHealth() {
@@ -108,13 +115,19 @@ export class HUD extends BaseEntity {
 
 	updateAmmo() {
 		const { ammo, gun } = this.player;
-		const fuck = [
+		const str = [
 			//
 			'Ammo:',
 			gun?.ammo ?? '-',
 			`(${ammo} remaining)`,
 			,
 		].join(' ');
-		this.ammoText.str = fuck;
+		this.ammoText.str = str;
+	}
+
+	updateRocks() {
+		const { rock: rocks } = this.player;
+		const str = ['Rocks:', rocks].join(' ');
+		this.rocksText.str = str;
 	}
 }

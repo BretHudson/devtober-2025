@@ -8,7 +8,7 @@ import { Camera } from 'canvas-lord/util/camera';
 import type { Ctx } from 'canvas-lord/util/canvas';
 import { Draw } from 'canvas-lord/util/draw';
 import { healthComponent } from '~/components/health';
-import { GunData } from '~/data/guns';
+import { allGunData, GunData } from '~/data/guns';
 import { Actor } from '~/entities/actor';
 import type { Gun } from '~/entities/gun';
 import { POWERUP, Powerup, PowerupData } from '~/entities/powerup';
@@ -17,7 +17,7 @@ import { COLLIDER_TAG, DEPTH } from '~/util/constants';
 import { Timer } from '~/util/timer';
 import { DamageInfo } from '~/util/types';
 import { BaseEntity } from './base-entity';
-import type { GunComponent } from '~/components/gun';
+import { GunComponent } from '~/components/gun';
 
 function getAxis(input: Input, neg: Key[], pos: Key[]) {
 	return +input.keyCheck(pos) - +input.keyCheck(neg);
@@ -44,6 +44,17 @@ export class Player extends Actor {
 
 	sinTimer = 0;
 
+	weapons: GunComponent[] = [];
+	weaponIndex = 0;
+
+	get gun() {
+		return this.weapons?.[this.weaponIndex];
+	}
+
+	set gun(_: GunComponent | undefined) {
+		// do nothing
+	}
+
 	get collider(): BoxCollider {
 		return super.collider as BoxCollider;
 	}
@@ -56,30 +67,40 @@ export class Player extends Actor {
 		return this.scene.inventory;
 	}
 
-	get rocks() {
-		return this.inventory.items.rocks.quantity;
+	get rock() {
+		return this.inventory.items.rock.quantity;
 	}
-	set rocks(value: number) {
-		this.inventory.items.rocks.quantity = value;
+	set rock(value: number) {
+		this.inventory.items.rock.quantity = value;
 	}
 
-	get rocksMax() {
-		return this.inventory.items.rocks.max;
+	get rockMax() {
+		return this.inventory.items.rock.max;
 	}
 
 	get ammo() {
-		return this.inventory.items.ammo.quantity;
+		return this.inventory.items.bullet.quantity;
 	}
 	set ammo(value: number) {
-		this.inventory.items.ammo.quantity = value;
+		this.inventory.items.bullet.quantity = value;
 	}
 
 	get ammoMax() {
-		return this.inventory.items.ammo.max;
+		return this.inventory.items.bullet.max;
 	}
 
 	constructor(x: number, y: number, gun?: GunData) {
 		super(x, y, COLLIDER_TAG.ENEMY_PROJECTILE, gun);
+
+		this.weapons = [
+			new GunComponent(allGunData.rock, this),
+			new GunComponent(allGunData.revolver, this),
+		];
+
+		for (let i = 1; i < this.weapons.length; ++i) {
+			console.log('dropping weapon?');
+			this.weapons[i].drop();
+		}
 
 		const asset = assetManager.sprites.get(ASSETS.GFX.CHARACTERS.MOUSE);
 		if (!asset) throw new Error();
@@ -143,6 +164,10 @@ export class Player extends Actor {
 
 			this.aimDir = this.scene.mouse.sub(this.pos);
 
+			if (input.keyPressed(Keys.Q)) {
+				this.swapWeapon();
+			}
+
 			const gunEntity = this.collideEntity<Gun>(
 				this.x,
 				this.y,
@@ -173,6 +198,12 @@ export class Player extends Actor {
 				this.shoot(this.aimDir);
 			}
 		}
+	}
+
+	swapWeapon() {
+		this.gun?.drop();
+		this.weaponIndex = (this.weaponIndex + 1) % this.weapons.length;
+		this.gun?.pickup(this);
 	}
 
 	postUpdate(): void {
@@ -210,7 +241,7 @@ export class Player extends Actor {
 	reload(gun: GunComponent) {
 		let reloaded = false;
 		for (let i = 0; i < 10; ++i) {
-			if (!this.inventory.use('ammo', 1)) break;
+			if (!this.inventory.use('bullet', 1)) break;
 
 			reloaded = true;
 			++gun.ammo;
@@ -277,10 +308,10 @@ export class Player extends Actor {
 				this.heal(1);
 				break;
 			case POWERUP.AMMO:
-				consumed = this.inventory.acquire('ammo', 10);
+				consumed = this.inventory.acquire('bullet', 10);
 				break;
 			case POWERUP.ROCK:
-				consumed = this.inventory.acquire('rocks', 1);
+				consumed = this.inventory.acquire('rock', 1);
 				break;
 
 			// powerups

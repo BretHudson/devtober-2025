@@ -22,8 +22,8 @@ import { LDtk } from '~/util/types';
 
 const types = [
 	//
-	['rocks', 0],
-	['ammo', 99],
+	['rock', 10],
+	['bullet', 99],
 ] as const;
 type InventoryItemType = (typeof types)[number][0];
 interface ItemData {
@@ -120,11 +120,9 @@ export class GameScene extends Scene {
 	}
 
 	begin(): void {
-		const { revolver } = allGunData;
-
 		this.addEntity(new HUD());
 
-		this.player = new Player(0, 0, revolver);
+		this.player = new Player(0, 0);
 		this.addEntity(this.player);
 		this.follow(this.player);
 

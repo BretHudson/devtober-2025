@@ -16,6 +16,7 @@ export interface GunData {
 	spreadAngle: number;
 	armLength: number;
 	origin: Vec2;
+	ammoType: string;
 	ammoCapacity: number;
 	reloadTime: number;
 }
@@ -35,6 +36,7 @@ const defaults: GunData = {
 	spreadAngle: 0,
 	armLength: 30,
 	origin: Vec2.zero,
+	ammoType: 'ammo',
 	ammoCapacity: 10,
 	reloadTime: 0.4,
 };
@@ -68,6 +70,7 @@ export const allGunData = {
 		projectile: 'rock',
 		origin: new Vec2(20, 0),
 		armLength: 30,
+		ammoType: 'rock',
 	} as GunData,
 	machineGun: {
 		//

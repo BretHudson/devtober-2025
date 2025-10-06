@@ -24,7 +24,13 @@ export class Actor extends BaseEntity {
 
 	hitStunTimer = new Timer(100);
 
-	gun?: GunComponent;
+	#gun?: GunComponent;
+	get gun() {
+		return this.#gun;
+	}
+	set gun(value: GunComponent | undefined) {
+		this.#gun = value;
+	}
 
 	fractVel = new Vec2();
 	velocity = new Vec2();
