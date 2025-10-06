@@ -36,7 +36,7 @@ export class GunComponent {
 		this.ammo = 10;
 
 		this.reloadTimer.onFinish.add(() => {
-			playSound(ASSETS.SFX.RELOAD_END, 0.2, 0.2);
+			playSound(ASSETS.SFX.WEAPONS.RELOAD_END, 0.2, 0.2);
 			this.owner.reload(this);
 		});
 	}
@@ -86,7 +86,7 @@ export class GunComponent {
 			return;
 		}
 
-		playSound(ASSETS.SFX.RELOAD_START, 0.2, 0.2);
+		playSound(ASSETS.SFX.WEAPONS.RELOAD_START, 0.2, 0.2);
 		this.reloadTimer.reset(60 * this.data.reloadTime);
 	}
 

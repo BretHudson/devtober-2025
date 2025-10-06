@@ -18,7 +18,13 @@ const readFolder = async (parent, dirPath) => {
 			.replaceAll('-', '_')
 			.toUpperCase();
 
-		if (stat.isFile()) return [name, entry];
+		if (stat.isFile())
+			return [
+				name,
+				path
+					.join(path.relative(assetsPath, dirPath), entry)
+					.replaceAll('\\', '/'),
+			];
 
 		const dir = {};
 		await readFolder(dir, entryPath);

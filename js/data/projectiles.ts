@@ -48,7 +48,7 @@ projectiles.set('basic', basic);
 const rock = {
 	...defaults,
 	speed: 3,
-	imageSrc: ASSETS.GFX.ROCK,
+	imageSrc: ASSETS.GFX.WEAPONS.ROCK,
 	size: 32,
 	rotate: 3,
 };
@@ -57,7 +57,7 @@ projectiles.set('rock', rock);
 const revolver = {
 	...defaults,
 	speed: 10,
-	imageSrc: ASSETS.GFX.BULLET,
+	imageSrc: ASSETS.GFX.WEAPONS.BULLET,
 	size: 16,
 	duration: 1,
 };

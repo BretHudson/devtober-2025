@@ -113,6 +113,12 @@ export class GameScene extends Scene {
 			this.addEntity(new Gun(g, x, y));
 		});
 
+		const ammoPickups = 20;
+		for (let i = 0; i < ammoPickups; ++i) {
+			const x = positionItemInRow(i, ammoPickups, 16, 32);
+			this.addEntity(new Powerup(POWERUP.AMMO, x, quarterSize.y * 3));
+		}
+
 		this.onRender.add(renderPattern(this));
 
 		this.updateCamera();

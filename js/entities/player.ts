@@ -59,10 +59,14 @@ export class Player extends Actor {
 		this.inventory.items.ammo.quantity = value;
 	}
 
+	get ammoMax() {
+		return this.inventory.items.ammo.max;
+	}
+
 	constructor(x: number, y: number, gun?: GunData) {
 		super(x, y, COLLIDER_TAG.ENEMY_PROJECTILE, gun);
 
-		const asset = assetManager.sprites.get(ASSETS.GFX.MOUSE);
+		const asset = assetManager.sprites.get(ASSETS.GFX.CHARACTERS.MOUSE);
 		if (!asset) throw new Error();
 		const sprite = new Sprite(asset);
 		sprite.centerOO();
@@ -125,7 +129,9 @@ export class Player extends Actor {
 			COLLIDER_TAG.GUN,
 		);
 		if (gunEntity && input.keyPressed(Keys.E)) {
-			const asset = assetManager.audio.get(ASSETS.SFX.PICK_UP_WEAPON);
+			const asset = assetManager.audio.get(
+				ASSETS.SFX.PICKUPS.PICK_UP_WEAPON,
+			);
 			if (!asset) throw new Error();
 			Sfx.play(asset, 0.5, 0.2);
 			this.switchGun(gunEntity.gunData);
@@ -220,12 +226,21 @@ export class Player extends Actor {
 		let consumed = false;
 		let callback: (() => void) | undefined;
 		switch (powerup) {
+			// pickups
 			case POWERUP.HEAL:
-				if (health.cur < health.max) {
-					consumed = true;
-					this.heal(1);
-				}
+				if (health.cur >= health.max) break;
+
+				consumed = true;
+				this.heal(1);
 				break;
+			case POWERUP.AMMO:
+				if (this.ammo >= this.ammoMax) break;
+
+				consumed = true;
+				this.ammo = Math.min(this.ammo + 10, this.ammoMax);
+				break;
+
+			// powerups
 			case POWERUP.SPEED_UP: {
 				consumed = true;
 				this.speedUp = true;

@@ -125,9 +125,9 @@ export class Actor extends BaseEntity {
 		this.hitStunTimer.reset(4);
 		this.sprite.color = 'white';
 
-		let src: string = ASSETS.SFX.HIT_1;
+		let src: string = ASSETS.SFX.COLLISION.HIT_1;
 		if (this.hurtBy === COLLIDER_TAG.ENEMY_PROJECTILE) {
-			src = ASSETS.SFX.HIT_2;
+			src = ASSETS.SFX.COLLISION.HIT_2;
 		}
 		const audio = assetManager.audio.get(src);
 		if (!audio) throw new Error();

@@ -8,12 +8,21 @@ import { assetManager, ASSETS, settings, defaultSettings } from '~/util/assets';
 import { FONTS } from '~/util/constants';
 
 // load assets
-Object.values(ASSETS.GFX).forEach((asset) => {
-	assetManager.addImage(asset);
-});
-Object.values(ASSETS.SFX).forEach((asset) => {
-	assetManager.addAudio(asset);
-});
+type PossibleAsset = string | Record<string, any>;
+type Callback = (src: string) => void;
+function registerAsset(asset: PossibleAsset, callback: Callback) {
+	if (typeof asset === 'string') {
+		callback(asset);
+		return;
+	}
+
+	Object.values(asset).forEach((childAsset: PossibleAsset) => {
+		registerAsset(childAsset, callback);
+	});
+}
+
+registerAsset(ASSETS.GFX, (src) => assetManager.addImage(src));
+registerAsset(ASSETS.SFX, (src) => assetManager.addAudio(src));
 
 const loadFont = async (name: string, fileName: string) => {
 	const font = new FontFace(name, `url("${fileName}")`);

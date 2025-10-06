@@ -20,11 +20,19 @@ export type PowerupData = {
 );
 
 export const POWERUP = {
+	// pick ups
 	HEAL: {
 		name: 'Heal',
 		color: 'red',
 		type: 'one-time',
 	} as PowerupData,
+	AMMO: {
+		name: 'Ammo',
+		color: 'silver',
+		type: 'one-time',
+	} as PowerupData,
+
+	// statuses
 	SPEED_UP: {
 		name: 'Speed Up',
 		color: '#77f',
