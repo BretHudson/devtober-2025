@@ -2,7 +2,7 @@ import { GridCollider } from 'canvas-lord/collider';
 import { Entity } from 'canvas-lord/core/entity';
 import { Input, Keys } from 'canvas-lord/core/input';
 import { Scene } from 'canvas-lord/core/scene';
-import { Sprite, TiledSprite } from 'canvas-lord/graphic';
+import { NineSlice, Sprite, TiledSprite } from 'canvas-lord/graphic';
 import { Vec2 } from 'canvas-lord/math';
 import type { Ctx } from 'canvas-lord/util/canvas';
 import { Draw } from 'canvas-lord/util/draw';
@@ -51,9 +51,7 @@ export class GameScene extends Scene {
 	constructor(ldtkData: LDtk.Data) {
 		super();
 
-		const asset = assetManager.sprites.get(ASSETS.GFX.CARPET)!;
-		this.addGraphic(new TiledSprite(asset)).depth = DEPTH.FLOOR;
-
+		// load level data
 		this.ldtkData = ldtkData;
 		const [level] = ldtkData.levels;
 		if (!level) throw new Error('no levels found');
@@ -63,11 +61,13 @@ export class GameScene extends Scene {
 		const gridLayer = layers.find((layer) => layer.__type === 'IntGrid');
 		if (!gridLayer) throw new Error('Missing IntGrid layer');
 
+		// set bounds
 		const SIZE = 32;
 		this.bounds = [-pxWid, -pxHei, pxWid, pxHei].map(
 			(v) => v / 2,
 		) as Exclude<typeof this.bounds, null>;
 
+		// create grid
 		const grid = Grid.fromArray(
 			gridLayer.intGridCsv,
 			pxWid,
@@ -76,7 +76,6 @@ export class GameScene extends Scene {
 			SIZE,
 		);
 		const walls = new Entity();
-
 		const wallCollider = new GridCollider(
 			grid,
 			this.bounds[0],
@@ -88,6 +87,17 @@ export class GameScene extends Scene {
 		this.addEntity(walls);
 
 		grid.renderMode = Grid.RenderMode.BOXES;
+
+		// add carpet & crown molding graphics
+		const carpet = assetManager.sprites.get(ASSETS.GFX.CARPET)!;
+		this.addGraphic(new TiledSprite(carpet)).depth = DEPTH.FLOOR;
+
+		const crownMolding = assetManager.sprites.get(
+			ASSETS.GFX.CROWN_MOLDING,
+		)!;
+		this.addGraphic(
+			new NineSlice(crownMolding, -pxWid / 2, -pxHei / 2, pxWid, pxHei),
+		);
 	}
 
 	begin(): void {

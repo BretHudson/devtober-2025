@@ -14,6 +14,7 @@ export const RAW_ASSET_DATA = {
 			ROBOVAC: 'gfx/characters/robovac.png',
 		},
 		CHEESE: 'gfx/cheese.png',
+		CROWN_MOLDING: 'gfx/crown-molding.png',
 		WEAPONS: {
 			BULLET: 'gfx/weapons/bullet.png',
 			ENEMY_GUN: 'gfx/weapons/enemy-gun.png',

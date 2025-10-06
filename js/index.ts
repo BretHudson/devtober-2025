@@ -41,6 +41,7 @@ const ldtkData: LDtk.Data = await fetch(levelFile).then((res) => res.json());
 Text.updateDefaultOptions({
 	font: FONTS.SKULLBOY,
 	size: 24,
+	color: '#111',
 });
 
 let game;

@@ -1,8 +1,6 @@
-import { Text } from 'canvas-lord/graphic';
+import { Title } from '~/graphic/title';
 
-export const createTitle = (str: string, y = -20) => {
-	const title = new Text(str, 0, y);
-	title.align = 'center';
-	title.baseline = 'bottom';
+export const createTitle = (str: string, y = -36) => {
+	const title = new Title(str, y);
 	return title;
 };
