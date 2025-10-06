@@ -17,6 +17,7 @@ import { COLLIDER_TAG, DEPTH } from '~/util/constants';
 import { Timer } from '~/util/timer';
 import { DamageInfo } from '~/util/types';
 import { BaseEntity } from './base-entity';
+import type { GunComponent } from '~/components/gun';
 
 function getAxis(input: Input, neg: Key[], pos: Key[]) {
 	return +input.keyCheck(pos) - +input.keyCheck(neg);
@@ -53,6 +54,17 @@ export class Player extends Actor {
 
 	get inventory() {
 		return this.scene.inventory;
+	}
+
+	get rocks() {
+		return this.inventory.items.rocks.quantity;
+	}
+	set rocks(value: number) {
+		this.inventory.items.rocks.quantity = value;
+	}
+
+	get rocksMax() {
+		return this.inventory.items.rocks.max;
 	}
 
 	get ammo() {
@@ -164,15 +176,17 @@ export class Player extends Actor {
 	}
 
 	postUpdate(): void {
-		this.sprite.color = undefined;
-		const status = this.getStatus(POWERUP.INVINCIBILITY);
-		if (status) {
-			// TODO(bret): gonna want to adjust this to use actual framedate rather than percentages (as durations can change)
-			const { percentLeft } = status.timer;
-			const closeToOut = percentLeft < 0.3;
-			const flash = (percentLeft * 20) % 2 < 1;
+		if (this.sprite.color !== 'white') {
+			this.sprite.color = undefined;
+			const status = this.getStatus(POWERUP.INVINCIBILITY);
+			if (status) {
+				// TODO(bret): gonna want to adjust this to use actual framedate rather than percentages (as durations can change)
+				const { percentLeft } = status.timer;
+				const closeToOut = percentLeft < 0.3;
+				const flash = (percentLeft * 20) % 2 < 1;
 
-			this.sprite.color = closeToOut && flash ? 'pink' : 'deeppink';
+				this.sprite.color = closeToOut && flash ? 'pink' : 'deeppink';
+			}
 		}
 
 		this.sprite.scaleX = Math.sign(this.aimDir.dot(Vec2.right)) || 1;
@@ -191,6 +205,17 @@ export class Player extends Actor {
 
 		this.hitTimer.reset(10);
 		this.addTimer(this.hitTimer);
+	}
+
+	reload(gun: GunComponent) {
+		let reloaded = false;
+		for (let i = 0; i < 10; ++i) {
+			if (!this.inventory.use('ammo', 1)) break;
+
+			reloaded = true;
+			++gun.ammo;
+		}
+		return reloaded;
 	}
 
 	die(): void {
@@ -252,10 +277,10 @@ export class Player extends Actor {
 				this.heal(1);
 				break;
 			case POWERUP.AMMO:
-				if (this.ammo >= this.ammoMax) break;
-
-				consumed = true;
-				this.ammo = Math.min(this.ammo + 10, this.ammoMax);
+				consumed = this.inventory.acquire('ammo', 10);
+				break;
+			case POWERUP.ROCK:
+				consumed = this.inventory.acquire('rocks', 1);
 				break;
 
 			// powerups
@@ -272,7 +297,7 @@ export class Player extends Actor {
 				break;
 			}
 			default:
-				throw new Error(`unsupported powerup "${powerup.type}"`);
+				throw new Error(`unsupported powerup "${powerup.name}"`);
 		}
 
 		if (powerup.type === 'status') {

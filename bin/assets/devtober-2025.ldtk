@@ -429,7 +429,8 @@
 			{ "id": "HEAL", "tileRect": null, "color": 16723968 },
 			{ "id": "AMMO", "tileRect": null, "color": 10269636 },
 			{ "id": "SPEED_UP", "tileRect": null, "color": 7829503 },
-			{ "id": "INVINCIBILITY", "tileRect": null, "color": 11808634 }
+			{ "id": "INVINCIBILITY", "tileRect": null, "color": 11808634 },
+			{ "id": "ROCK", "tileRect": null, "color": 7552569 }
 		], "iconTilesetUid": null, "externalRelPath": null, "externalFileChecksum": null, "tags": [] },
 		{ "identifier": "Guns", "uid": 13, "values": [
 			{ "id": "Revolver", "tileRect": null, "color": 12470831 },
@@ -587,13 +588,16 @@
 							"__pivot": [0.5,0.5],
 							"__tags": [],
 							"__tile": null,
-							"__smartColor": "#9CB3C4",
+							"__smartColor": "#733E39",
 							"iid": "fa1e0180-8560-11f0-83e4-41da0233e6cd",
 							"width": 32,
 							"height": 32,
 							"defUid": 10,
 							"px": [1456,1488],
-							"fieldInstances": [{ "__identifier": "Type", "__type": "LocalEnum.Powerup", "__value": "AMMO", "__tile": null, "defUid": 12, "realEditorValues": [] }],
+							"fieldInstances": [{ "__identifier": "Type", "__type": "LocalEnum.Powerup", "__value": "ROCK", "__tile": null, "defUid": 12, "realEditorValues": [{
+								"id": "V_String",
+								"params": ["ROCK"]
+							}] }],
 							"__worldX": 1456,
 							"__worldY": 1488
 						},

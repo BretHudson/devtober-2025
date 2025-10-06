@@ -22,6 +22,7 @@ import { LDtk } from '~/util/types';
 
 const types = [
 	//
+	['rocks', 0],
 	['ammo', 99],
 ] as const;
 type InventoryItemType = (typeof types)[number][0];
@@ -38,6 +39,23 @@ class Inventory {
 			(map, [k, max]) => ((map[k] = { quantity: 0, max }), map),
 			{} as typeof this.items,
 		);
+	}
+
+	acquire(type: InventoryItemType, quantity: number) {
+		const slot = this.items[type];
+		if (slot.quantity >= slot.max) return false;
+
+		slot.quantity += quantity;
+		slot.quantity = Math.min(slot.quantity, slot.max);
+		return true;
+	}
+
+	use(type: InventoryItemType, quantity = 1) {
+		const slot = this.items[type];
+		if (slot.quantity < quantity) return false;
+
+		slot.quantity -= quantity;
+		return true;
 	}
 }
 

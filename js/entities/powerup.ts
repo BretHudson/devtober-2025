@@ -4,6 +4,10 @@ import { CircleCollider } from 'canvas-lord/collider';
 import { COLLIDER_TAG } from '~/util/constants';
 import { CSSColor } from 'canvas-lord/util/types';
 import { createTitle } from '~/util/ui';
+import { assetManager, ASSETS } from '~/util/assets';
+import { GraphicList } from 'canvas-lord/graphic';
+import { ImageAsset, Input } from 'canvas-lord';
+import { globalRandom } from '~/util/random';
 
 export type PowerupData = {
 	name: string;
@@ -31,6 +35,11 @@ export const POWERUP = {
 		color: 'silver',
 		type: 'one-time',
 	} as PowerupData,
+	ROCK: {
+		name: 'Rock',
+		color: 'brown',
+		type: 'one-time',
+	} as PowerupData,
 
 	// statuses
 	SPEED_UP: {
@@ -53,12 +62,24 @@ export const POWERUP = {
 export class Powerup extends BaseEntity {
 	type: PowerupData;
 
-	constructor(type: PowerupData, x: number, y: number) {
+	bgSprite: Sprite;
+	fgSprite: Sprite;
+
+	time = 0;
+
+	constructor(type: PowerupData, x: number, y: number, asset?: ImageAsset) {
 		super(x, y);
 
-		const sprite = Sprite.createCircle(16, 'white');
-		sprite.centerOO();
-		this.graphic = sprite;
+		const bg = assetManager.sprites.get(ASSETS.GFX.ITEMS.POWERUP_BG)!;
+		const fg =
+			asset ?? assetManager.sprites.get(ASSETS.GFX.ITEMS.POWERUP_FG)!;
+
+		this.bgSprite = new Sprite(bg);
+		this.bgSprite.centerOO();
+		this.fgSprite = new Sprite(fg);
+		this.fgSprite.centerOO();
+
+		this.graphic = new GraphicList(this.bgSprite, this.fgSprite);
 
 		this.addGraphic(createTitle(type.name));
 
@@ -69,7 +90,18 @@ export class Powerup extends BaseEntity {
 
 		this.type = type;
 
-		sprite.color = type.color as string;
+		if (!asset) this.fgSprite.color = type.color as string;
 		collider.color = type.color;
+
+		this.time = globalRandom.float(5);
+
+		this.bgSprite.angle = globalRandom.float(360);
+	}
+
+	update(): void {
+		this.time += 0.05;
+		this.bgSprite.scale = 1.3 + Math.sin(this.time) * 0.1;
+
+		this.bgSprite.angle += 0.5;
 	}
 }

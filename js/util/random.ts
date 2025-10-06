@@ -6,7 +6,7 @@ export const SEEDS = {
 	ROBOVAC_INIT: settings.seed ? 777 : undefined,
 };
 
-const globalRandom = new Random(settings.seed);
+export const globalRandom = new Random(settings.seed);
 
 export const randomSpreadAngle = (angle: number, random = globalRandom) => {
 	return random.float(angle) - angle / 2;

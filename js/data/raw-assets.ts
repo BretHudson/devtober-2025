@@ -7,6 +7,7 @@ export const RAW_ASSET_DATA = {
 		CARPET: 'gfx/carpet.jpg',
 		CHARACTERS: {
 			ENEMY: 'gfx/characters/enemy.png',
+			MOUSE_TRAP_2_ACTIVATED: 'gfx/characters/mouse-trap-2-activated.png',
 			MOUSE_TRAP_2: 'gfx/characters/mouse-trap-2.png',
 			MOUSE_TRAP: 'gfx/characters/mouse-trap.png',
 			MOUSE: 'gfx/characters/mouse.png',
@@ -15,6 +16,10 @@ export const RAW_ASSET_DATA = {
 		},
 		CHEESE: 'gfx/cheese.png',
 		CROWN_MOLDING: 'gfx/crown-molding.png',
+		ITEMS: {
+			POWERUP_BG: 'gfx/items/powerup-bg.png',
+			POWERUP_FG: 'gfx/items/powerup-fg.png',
+		},
 		WEAPONS: {
 			BULLET: 'gfx/weapons/bullet.png',
 			ENEMY_GUN: 'gfx/weapons/enemy-gun.png',
