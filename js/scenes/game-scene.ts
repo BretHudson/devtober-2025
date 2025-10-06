@@ -187,8 +187,8 @@ export class GameScene extends Scene {
 			);
 		}
 
-		this.camera.x = newX - this.engine.halfWidth;
-		this.camera.y = newY - this.engine.halfHeight;
+		this.camera.x = Math.round(newX - this.engine.halfWidth);
+		this.camera.y = Math.round(newY - this.engine.halfHeight);
 	}
 
 	removePlayer() {
