@@ -103,11 +103,11 @@ export const allGunData = {
 		imageSrc: ASSETS.GFX.WEAPONS.SHOTGUN,
 		audioSrc: ASSETS.SFX.WEAPONS.SHOTGUN_1,
 		color: 'lime',
-		projectile: 'machine-gun',
+		projectile: 'shotgun-shell',
 		cooldown: 30,
 		ammoCapacity: 30,
 		bulletCount: 5,
-		bulletSepAngle: 10,
+		bulletSepAngle: 3,
 	} as GunData,
 	enemyGun: {
 		...defaults,
@@ -118,4 +118,4 @@ export const allGunData = {
 		projectile: 'basic',
 		cooldown: 30,
 	} as GunData,
-} as const;
+} as const satisfies Record<string, GunData>;

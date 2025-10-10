@@ -7,6 +7,7 @@ const types = {
 	rock: 'rock',
 	revolver: 'revolver',
 	machineGun: 'machine-gun',
+	shotgunShell: 'shotgun-shell',
 	rifle: 'rifle',
 } as const;
 export type ProjectileType = (typeof types)[keyof typeof types];
@@ -30,7 +31,7 @@ const defaults: ProjectileFlyweight = {
 	speed: 5,
 	color: 'magenta',
 	damage: 1,
-	duration: 60,
+	duration: 1,
 	size: 8,
 	imageSrc: '',
 	image: nullImage,
@@ -69,6 +70,14 @@ const machineGun = {
 	color: 'pink',
 };
 projectiles.set('machine-gun', machineGun);
+
+const shotgunShell = {
+	...defaults,
+	speed: 10,
+	duration: 0.5,
+	color: 'pink',
+};
+projectiles.set('shotgun-shell', shotgunShell);
 
 const rifle = {
 	...defaults,

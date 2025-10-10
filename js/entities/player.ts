@@ -344,18 +344,20 @@ export class Player extends Actor {
 
 		const aimAt = this.aimDir.add(this.pos);
 
-		const r = 20;
-		Draw.circle(
-			ctx,
-			{
-				color: 'yellow',
-				type: 'stroke',
-				originX: r,
-				originY: r,
-			},
-			aimAt.x - camera.x,
-			aimAt.y - camera.y,
-			r,
-		);
+		for (let i = 0; i < 2; ++i) {
+			const r = 16 + i * 4;
+			Draw.circle(
+				ctx,
+				{
+					color: 'red',
+					type: 'stroke',
+					originX: r,
+					originY: r,
+				},
+				aimAt.x - camera.x,
+				aimAt.y - camera.y,
+				r,
+			);
+		}
 	}
 }

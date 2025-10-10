@@ -109,7 +109,7 @@ export class GameScene extends Scene {
 
 		// add carpet & crown molding graphics
 		const carpet = assetManager.sprites.get(ASSETS.GFX.CARPET)!;
-		this.addGraphic(new TiledSprite(carpet)).depth = DEPTH.FLOOR;
+		// this.addGraphic(new TiledSprite(carpet)).depth = DEPTH.FLOOR;
 
 		const crownMolding = assetManager.sprites.get(
 			ASSETS.GFX.CROWN_MOLDING,
