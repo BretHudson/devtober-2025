@@ -6,6 +6,7 @@ import type { GunData } from '~/data/guns';
 import { Actor } from '~/entities/actor';
 import { Projectile } from '~/entities/projectile';
 import { ASSETS } from '~/util/assets';
+import { positionItemInRow } from '~/util/math';
 import { randomSpreadAngle } from '~/util/random';
 import { playSound } from '~/util/sound';
 import { Timer } from '~/util/timer';
@@ -18,7 +19,9 @@ export class GunComponent {
 	reloadTimer = new Timer();
 
 	ammo: number;
-	ammoCapacity: number = 10;
+	get ammoCapacity() {
+		return this.data.ammoCapacity;
+	}
 
 	get shootPos(): Vec2 {
 		let pos = this.data.origin.rotate(degToRad(this.sprite.angle));
@@ -33,7 +36,7 @@ export class GunComponent {
 		this.owner.addGraphic(this.sprite);
 		this.setGun(gun);
 
-		this.ammo = 10;
+		this.ammo = this.ammoCapacity;
 
 		this.reloadTimer.onFinish.add(() => {
 			playSound(ASSETS.SFX.WEAPONS.RELOAD_END, 0.2, 0.2);
@@ -98,18 +101,28 @@ export class GunComponent {
 	shoot(target: Vec2): void {
 		if (this.cooldown.running) return;
 
-		if (this.ammo > 0) {
-			const angleOffset = randomSpreadAngle(this.data.spreadAngle);
-			const dir = target.rotate(degToRad(angleOffset));
+		const bulletsToShoot = Math.min(this.ammo, this.data.bulletCount);
+		if (bulletsToShoot > 0) {
+			for (let i = 0; i < bulletsToShoot; ++i) {
+				const itemAngle = positionItemInRow(
+					i,
+					bulletsToShoot,
+					0,
+					this.data.bulletSepAngle,
+				);
+				const angleOffset =
+					itemAngle + randomSpreadAngle(this.data.spreadAngle);
+				const dir = target.rotate(degToRad(angleOffset));
 
-			this.owner.scene.addEntity(
-				new Projectile(this.owner, dir, this.data.projectile),
-			);
+				this.owner.scene.addEntity(
+					new Projectile(this.owner, dir, this.data.projectile),
+				);
+			}
 
 			Sfx.play(this.data.audio, 0.2, 0.2);
 
 			this.cooldown.reset(this.data.cooldown);
-			--this.ammo;
+			this.ammo -= bulletsToShoot;
 		} else {
 			this.tryReload();
 		}

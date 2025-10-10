@@ -19,6 +19,9 @@ export interface GunData {
 	ammoType: string;
 	ammoCapacity: number;
 	reloadTime: number;
+
+	bulletCount: number;
+	bulletSepAngle: number;
 }
 
 const nullImage = null as unknown as ImageAsset;
@@ -39,6 +42,8 @@ const defaults: GunData = {
 	ammoType: 'ammo',
 	ammoCapacity: 10,
 	reloadTime: 0.4,
+	bulletCount: 1,
+	bulletSepAngle: 5,
 };
 
 // damage
@@ -100,6 +105,9 @@ export const allGunData = {
 		color: 'lime',
 		projectile: 'machine-gun',
 		cooldown: 30,
+		ammoCapacity: 30,
+		bulletCount: 5,
+		bulletSepAngle: 10,
 	} as GunData,
 	enemyGun: {
 		...defaults,

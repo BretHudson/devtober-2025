@@ -93,6 +93,7 @@ export class Player extends Actor {
 		super(x, y, COLLIDER_TAG.ENEMY_PROJECTILE, gun);
 
 		this.weapons = [
+			new GunComponent(allGunData.shotgun, this),
 			new GunComponent(allGunData.rock, this),
 			new GunComponent(allGunData.revolver, this),
 		];
@@ -240,7 +241,7 @@ export class Player extends Actor {
 
 	reload(gun: GunComponent) {
 		let reloaded = false;
-		for (let i = 0; i < 10; ++i) {
+		for (let i = 0; i < gun.ammoCapacity; ++i) {
 			if (!this.inventory.use('bullet', 1)) break;
 
 			reloaded = true;
