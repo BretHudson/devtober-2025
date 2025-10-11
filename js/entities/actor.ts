@@ -1,3 +1,4 @@
+import { Collider } from 'canvas-lord/collider';
 import { Sfx } from 'canvas-lord/core/asset-manager';
 import { Input } from 'canvas-lord/core/input';
 import type { Sprite } from 'canvas-lord/graphic';
@@ -58,6 +59,11 @@ export class Actor extends BaseEntity {
 
 	get dead() {
 		return this.health.cur <= 0;
+	}
+
+	get solidCollider(): Collider {
+		if (!this.collider) throw new Error('no collider');
+		return this.collider;
 	}
 
 	constructor(x: number, y: number, hurtBy: HurtBy, gun?: GunData) {

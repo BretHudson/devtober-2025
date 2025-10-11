@@ -47,20 +47,14 @@ export class Player extends Actor {
 	weapons: GunComponent[] = [];
 	weaponIndex = 0;
 
+	powerupCollider: BoxCollider;
+
 	get gun() {
 		return this.weapons?.[this.weaponIndex];
 	}
 
 	set gun(_: GunComponent | undefined) {
 		// do nothing
-	}
-
-	get collider(): BoxCollider {
-		return super.collider as BoxCollider;
-	}
-
-	set collider(collider: BoxCollider) {
-		super.collider = collider;
 	}
 
 	get inventory() {
@@ -110,10 +104,18 @@ export class Player extends Actor {
 		sprite.originX += 15;
 		this.graphic = sprite;
 
-		const collider = new BoxCollider(24, 100);
-		collider.tag = COLLIDER_TAG.PLAYER;
-		collider.centerOO();
-		this.collider = collider;
+		const solidCollider = new BoxCollider(24, 100);
+		solidCollider.tag = COLLIDER_TAG.PLAYER;
+		solidCollider.centerOO();
+		this.addCollider(solidCollider);
+
+		const powerupCollider = new BoxCollider(100, 24);
+		powerupCollider.tag = COLLIDER_TAG.PLAYER;
+		powerupCollider.centerOO();
+		powerupCollider.color = 'lime';
+		this.powerupCollider = powerupCollider;
+		this.addCollider(powerupCollider);
+
 		this.colliderVisible = true;
 
 		this.addComponent(healthComponent);
@@ -183,7 +185,7 @@ export class Player extends Actor {
 				this.switchGun(gunEntity.gunData);
 			}
 
-			const powerup = this.collideEntity<Powerup>(
+			const powerup = this.powerupCollider.collideEntity<Powerup>(
 				this.x,
 				this.y,
 				COLLIDER_TAG.POWERUP,

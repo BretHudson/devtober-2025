@@ -1,5 +1,6 @@
-import { AssetManager, Entity } from 'canvas-lord/canvas-lord';
+import { AssetManager } from 'canvas-lord/canvas-lord';
 import { RAW_ASSET_DATA } from '../data/raw-assets';
+import type { Entity } from 'canvas-lord/core/entity';
 
 // const GFX = {
 // 	PLAYER: 'gfx/player.png',
