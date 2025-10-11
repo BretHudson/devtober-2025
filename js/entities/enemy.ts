@@ -40,7 +40,7 @@ export class Enemy extends Actor {
 	}
 
 	constructor(x: number, y: number, type: EnemyFlyweight) {
-		super(x, y, COLLIDER_TAG.PROJECTILE);
+		super(x, y, COLLIDER_TAG.PLAYER_PROJECTILE);
 
 		const sprite = new Sprite(type.image);
 		sprite.centerOO();

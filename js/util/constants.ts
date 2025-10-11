@@ -2,6 +2,7 @@ export const COLLIDER_TAG = {
 	PLAYER: 'player',
 	ENEMY: 'enemy',
 	PROJECTILE: 'projectile',
+	PLAYER_PROJECTILE: 'player_projectile',
 	ENEMY_PROJECTILE: 'enemy_projectile',
 
 	GUN: 'gun',

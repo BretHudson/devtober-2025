@@ -59,12 +59,11 @@ export class Projectile extends BaseEntity {
 		this.speed = type.speed;
 
 		const collider = new CircleCollider(type.size / 2);
-		// TODO(bret): this is hacky af
-		collider.tag =
-			owner.collider?.tag === COLLIDER_TAG.ENEMY
-				? COLLIDER_TAG.ENEMY_PROJECTILE
-				: COLLIDER_TAG.PROJECTILE;
-		// collider.centerOO();
+		const tag = owner.collider?.tags.includes('player')
+			? COLLIDER_TAG.PLAYER_PROJECTILE
+			: COLLIDER_TAG.ENEMY_PROJECTILE;
+		collider.addTags(COLLIDER_TAG.PROJECTILE, tag);
+		collider.centerOO();
 		this.collider = collider;
 
 		this.colliderVisible = true;
@@ -73,10 +72,16 @@ export class Projectile extends BaseEntity {
 	}
 
 	update(): void {
-		this.x += this.dir.x * this.speed;
-		this.y += this.dir.y * this.speed;
+		const dX = this.dir.x * this.speed;
+		const dY = this.dir.y * this.speed;
 
-		if (this.collide(this.x, this.y, COLLIDER_TAG.WALL)) this.hitWall();
+		if (this.collide(this.x + dX, this.y + dY, COLLIDER_TAG.WALL)) {
+			this.hitWall();
+			return;
+		}
+
+		this.x += dX;
+		this.y += dY;
 
 		this.imageAngle += this.type.rotate;
 		let segments = 10;
