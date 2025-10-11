@@ -2,7 +2,7 @@ import { GridCollider } from 'canvas-lord/collider';
 import { Entity } from 'canvas-lord/core/entity';
 import { Input, Keys } from 'canvas-lord/core/input';
 import { Scene } from 'canvas-lord/core/scene';
-import { NineSlice, Sprite, TiledSprite } from 'canvas-lord/graphic';
+import { NineSlice } from 'canvas-lord/graphic';
 import { Vec2 } from 'canvas-lord/math';
 import type { Ctx } from 'canvas-lord/util/canvas';
 import { Draw } from 'canvas-lord/util/draw';
@@ -17,7 +17,7 @@ import { POWERUP, Powerup } from '~/entities/powerup';
 import { HUD } from '~/entities/ui/hud';
 import { assetManager, ASSETS } from '~/util/assets';
 import { renderPattern } from '~/util/background-pattern';
-import { COLLIDER_TAG, DEPTH, FONTS } from '~/util/constants';
+import { COLLIDER_TAG, FONTS } from '~/util/constants';
 import { LDtk } from '~/util/types';
 
 const types = [
@@ -100,6 +100,7 @@ export class GameScene extends Scene {
 			this.bounds[0],
 			this.bounds[1],
 		);
+		wallCollider.color = 'yellow';
 		wallCollider.tag = COLLIDER_TAG.WALL;
 		walls.collider = wallCollider;
 		walls.colliderVisible = true;
@@ -116,7 +117,7 @@ export class GameScene extends Scene {
 		)!;
 		this.addGraphic(
 			new NineSlice(crownMolding, -pxWid / 2, -pxHei / 2, pxWid, pxHei),
-		);
+		).depth = 100;
 	}
 
 	begin(): void {
