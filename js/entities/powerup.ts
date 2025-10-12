@@ -84,6 +84,7 @@ export class Powerup extends BaseEntity {
 		this.addGraphic(createTitle(type.name));
 
 		const collider = new CircleCollider(16);
+		collider.centerOO();
 		collider.tag = COLLIDER_TAG.POWERUP;
 		this.collider = collider;
 		this.colliderVisible = true;

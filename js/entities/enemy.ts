@@ -58,12 +58,12 @@ export class Enemy extends Actor {
 
 		let collider: Collider;
 		if (Array.isArray(type.hitbox)) {
-			const boxCollider = new BoxCollider(...type.hitbox);
-			boxCollider.centerOO();
-			collider = boxCollider;
+			collider = new BoxCollider(...type.hitbox);
 		} else {
 			collider = new CircleCollider(type.hitbox);
 		}
+		// @ts-expect-error - this will be resolved soon
+		collider.centerOO();
 		collider.tag = COLLIDER_TAG.ENEMY;
 		this.collider = collider;
 

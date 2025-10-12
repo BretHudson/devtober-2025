@@ -22,6 +22,7 @@ export class Gun extends BaseEntity {
 		this.addGraphic(createTitle(gunData.name));
 
 		const collider = new CircleCollider(16);
+		collider.centerOO();
 		collider.tag = COLLIDER_TAG.GUN;
 		this.collider = collider;
 		this.colliderVisible = true;
