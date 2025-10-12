@@ -1,4 +1,5 @@
 import { Entity } from 'canvas-lord/core/entity';
+import { Vec2 } from 'canvas-lord/math';
 import type { GameScene } from '~/scenes/game-scene';
 import { onUpdateHandleShowHitbox } from '~/util/assets';
 
@@ -16,7 +17,7 @@ export class BaseEntity extends Entity<GameScene> {
 	}
 
 	deltaToPlayer() {
-		return this.player.pos.sub(this.pos);
+		return Vec2.sub(this.player.pos, this.pos);
 	}
 
 	removeSelf() {

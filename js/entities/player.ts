@@ -145,7 +145,7 @@ export class Player extends Actor {
 
 	update(input: Input): void {
 		if (this.hitTimer.running) {
-			this.velocity = this.velocity.scale(0.5);
+			this.velocity.scale(0.5);
 		}
 
 		if (!this.hitTimer.running) {
@@ -160,12 +160,11 @@ export class Player extends Actor {
 			if (vel.magnitude > 0) {
 				this.sinTimer += 1;
 
-				vel.normalize();
-				vel = vel.scale(speed);
+				vel.normalize().scale(speed);
 			}
 			this.velocity = vel;
 
-			this.aimDir = this.scene.mouse.sub(this.pos);
+			this.aimDir = Vec2.sub(this.scene.mouse, this.pos);
 
 			if (input.keyPressed(Keys.Q)) {
 				this.swapWeapon();
@@ -233,9 +232,8 @@ export class Player extends Actor {
 		if (settings.invincible) return;
 		super.takeDamage(damageInfo, other);
 
-		const delta = other.pos.sub(this.pos);
-		delta.normalize();
-		this.velocity = delta.scale(-48);
+		const delta = Vec2.sub(other.pos, this.pos);
+		this.velocity = delta.normalize().scale(-48);
 
 		this.hitTimer.reset(10);
 		this.addTimer(this.hitTimer);
@@ -344,7 +342,7 @@ export class Player extends Actor {
 	render(ctx: Ctx, camera: Camera): void {
 		super.render(ctx, camera);
 
-		const aimAt = this.aimDir.add(this.pos);
+		const aimAt = Vec2.add(this.aimDir, this.pos);
 
 		for (let i = 0; i < 2; ++i) {
 			const r = 16 + i * 4;

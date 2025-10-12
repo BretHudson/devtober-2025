@@ -94,12 +94,12 @@ export class Actor extends BaseEntity {
 	update(_input?: Input) {
 		const { x, y } = this;
 
-		this.fractVel = this.fractVel.add(this.velocity);
+		this.fractVel.add(this.velocity);
 		const whole = new Vec2(
 			Math.trunc(this.fractVel.x),
 			Math.trunc(this.fractVel.y),
 		);
-		this.fractVel = this.fractVel.sub(whole);
+		this.fractVel.sub(whole);
 
 		const xDir = Math.sign(whole.x);
 		for (let i = 0; i < Math.abs(whole.x); ++i) {

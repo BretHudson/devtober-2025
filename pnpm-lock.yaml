@@ -24,8 +24,8 @@ importers:
         specifier: ^1.8.11
         version: 1.8.11
       typescript:
-        specifier: 5.8.2
-        version: 5.8.2
+        specifier: 5.9.3
+        version: 5.9.3
       vitest:
         specifier: ^3.2.4
         version: 3.2.4(jsdom@27.0.0(canvas@3.2.0)(postcss@8.5.6))
@@ -964,8 +964,8 @@ packages:
   tunnel-agent@0.6.0:
     resolution: {integrity: sha512-McnNiV1l8RYeY8tBgEpuodCC1mLUdbSN+CYBL7kJsJNInOP8UjDDEwdk6Mw60vdLLrr5NHKZhMAOSrR2NZuQ+w==}
 
-  typescript@5.8.2:
-    resolution: {integrity: sha512-aJn6wq13/afZp/jT9QZmwEjDqqvSGp1VT5GVg+f/t6/oVyrgXM6BY1h9BRh/O5p3PlUPAe+WuiEZOmb/49RqoQ==}
+  typescript@5.9.3:
+    resolution: {integrity: sha512-jl1vZzPDinLr9eUt3J/t7V6FgNEw9QjvBPdysz9KfQDD41fQrC2Y4vKQdiaUpFT4bXlb1RHhLpp8wtm6M5TgSw==}
     engines: {node: '>=14.17'}
     hasBin: true
 
@@ -1954,7 +1954,7 @@ snapshots:
     dependencies:
       safe-buffer: 5.2.1
 
-  typescript@5.8.2: {}
+  typescript@5.9.3: {}
 
   util-deprecate@1.0.2: {}
 

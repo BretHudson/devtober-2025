@@ -1,6 +1,6 @@
 import { CircleCollider } from 'canvas-lord/collider';
 import { Sprite } from 'canvas-lord/graphic';
-import type { Vec2 } from 'canvas-lord/math';
+import { Vec2 } from 'canvas-lord/math';
 import { radToDeg } from 'canvas-lord/math/misc';
 import {
 	ProjectileFlyweight,
@@ -27,7 +27,7 @@ export class Projectile extends BaseEntity {
 	}
 
 	constructor(owner: Actor, dir: Vec2, typeName: ProjectileType) {
-		const pos = owner.pos.add(owner.gun!.shootPos);
+		const pos = Vec2.add(owner.pos, owner.gun!.shootPos);
 		super(pos.x, pos.y);
 
 		const type = projectiles.get(typeName);
@@ -54,8 +54,7 @@ export class Projectile extends BaseEntity {
 
 		this.owner = owner;
 
-		this.dir = dir;
-		this.dir.normalize();
+		this.dir = Vec2.normalize(dir);
 		this.speed = type.speed;
 
 		const collider = new CircleCollider(type.size / 2);

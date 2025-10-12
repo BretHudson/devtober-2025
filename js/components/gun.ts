@@ -72,9 +72,7 @@ export class GunComponent {
 
 	update(): void {
 		const { owner } = this;
-		let offset = owner.aimDir.clone();
-		offset.normalize();
-		offset = offset.scale(this.data.armLength);
+		const offset = Vec2.normalize(owner.aimDir).scale(this.data.armLength);
 
 		this.sprite.x = offset.x;
 		this.sprite.y = offset.y;

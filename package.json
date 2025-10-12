@@ -27,7 +27,7 @@
 		"jsdom": "^27.0.0",
 		"prettier": "^3.6.2",
 		"tsc-alias": "^1.8.11",
-		"typescript": "5.8.2",
+		"typescript": "5.9.3",
 		"vitest": "^3.2.4"
 	},
 	"dependencies": {

@@ -68,7 +68,10 @@ export class Enemy extends Actor {
 		this.collider = collider;
 
 		if (type === ENEMIES.ROBOVAC) {
-			this.velocity = Enemy.robovacInitRandom.choose(directions).scale(3);
+			this.velocity = Enemy.robovacInitRandom
+				.choose(directions)
+				.clone()
+				.scale(3);
 		}
 
 		this.type = type;
@@ -101,7 +104,7 @@ export class Enemy extends Actor {
 			this.velocity.normalize();
 			this.velocity.x = Math.round(this.velocity.x);
 			this.velocity.y = Math.round(this.velocity.y);
-			this.velocity = this.velocity.scale(mag);
+			this.velocity.scale(mag);
 		}
 	}
 

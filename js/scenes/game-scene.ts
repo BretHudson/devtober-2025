@@ -233,11 +233,11 @@ export class GameScene extends Scene {
 		let offset = Vec2.zero;
 		// TODO(bret): this is so hacked together lmao
 		if (cameraTarget === this.player) {
-			offset = this.player.aimDir.scale(0.1);
+			offset = this.player.aimDir.clone().scale(0.1);
 			offset.y *= 16 / 9;
 		}
 
-		const target = cameraTarget.pos.add(offset);
+		const target = Vec2.add(cameraTarget.pos, offset);
 
 		newX = target.x;
 		newY = target.y;
